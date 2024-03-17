@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log"
 	"time"
 )
 
@@ -328,7 +329,7 @@ func (m *PostgresDBRepo) AllSkills() ([]*models.Skill, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
-	query := `select id, skill_name from skills order by skill_name`
+	query := `select id, skill_name, created_at, updated_at from skills order by skill_name`
 
 	rows, err := m.DB.QueryContext(ctx, query)
 	if err != nil {
@@ -343,6 +344,8 @@ func (m *PostgresDBRepo) AllSkills() ([]*models.Skill, error) {
 		err := rows.Scan(
 			&g.ID,
 			&g.Name,
+			&g.CreatedAt,
+			&g.UpdatedAt,
 		)
 		if err != nil {
 			return nil, err
@@ -359,7 +362,7 @@ func (m *PostgresDBRepo) InsertProject(project models.Project) (int, error) {
 	defer cancel()
 
 	stmt := `insert into projects (title, description, technology_stack,
-			status, category, coalesce(image, ''),created_at, updated_at)
+			status, category, image,created_at, updated_at)
 			values ($1, $2, $3, $4, $5, $6, $7, $8) returning id`
 
 	var newID int
@@ -375,6 +378,26 @@ func (m *PostgresDBRepo) InsertProject(project models.Project) (int, error) {
 		&project.UpdatedAt,
 	).Scan(&newID)
 
+	if err != nil {
+		log.Printf("插入新項目時出錯: %v", err)
+		return 0, err
+	}
+
+	if err != nil {
+		return 0, err
+	}
+
+	return newID, nil
+}
+
+func (m *PostgresDBRepo) InsertSkill(skill models.Skill) (int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	defer cancel()
+
+	stmt := `INSERT INTO skills (skill_name) VALUES ($1) RETURNING id`
+
+	var newID int
+	err := m.DB.QueryRowContext(ctx, stmt, skill.Name).Scan(&newID)
 	if err != nil {
 		return 0, err
 	}

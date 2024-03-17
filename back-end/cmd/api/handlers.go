@@ -233,6 +233,30 @@ func (app *application) InsertProject(w http.ResponseWriter, r *http.Request) {
 	app.writeJSON(w, http.StatusAccepted, resp)
 }
 
+// 新技能的函數
+func (app *application) InsertSkill(w http.ResponseWriter, r *http.Request) {
+	var skill models.Skill
+	err := app.readJSON(w, r, &skill)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	id, err := app.DB.InsertSkill(skill)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	resp := JSONResponse{
+		Error:   false,
+		Message: "Skill added",
+		Data:    id,
+	}
+
+	app.writeJSON(w, http.StatusCreated, resp)
+}
+
 func (app *application) UpdateProject(w http.ResponseWriter, r *http.Request) {
 	var payload models.Project
 

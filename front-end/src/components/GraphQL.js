@@ -75,7 +75,7 @@ const GraphQL = () => {
         fetch(`${process.env.REACT_APP_BACKEND}/skills`)
             .then(response => response.json())
             .then(data => {
-                console.log("Skills data: ", data);//debug
+                //console.log("Skills data: ", data);//debug
                 setSkillList(data);
             })
             .catch(error => console.error("Fetching skills failed", error));
@@ -96,7 +96,7 @@ const GraphQL = () => {
         if (value === "") {
             loadAllProjects();
         }else{
-            console.log("Selected skill: ", value); //debug
+            //console.log("Selected skill: ", value); //debug
             performSearch(value);
         }
     };

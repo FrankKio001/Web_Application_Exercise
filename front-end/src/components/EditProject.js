@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import Input from "./form/Input";
 import Select from "./form/Select";
@@ -29,17 +29,17 @@ const EditProject = () => {
     const hasError = (key) => {
         return errors.indexOf(key) !== -1;
     }
-
+    //先隨便用Array(10)
     const [project, setProject] = useState({
         id: 0,
         title: "",
         description: "",
-        technologyStack: "",
+        technology_stack: "",
         status: "",
         category: "",
         image: "",
         skills: [],
-        skills_array: [],
+        skills_array: [Array(3).fill(false)],
     });
 
     // get id from the URL
@@ -60,12 +60,12 @@ const EditProject = () => {
                 id: 0,
                 title: "",
                 description: "",
-                technologyStack: "",
+                technology_stack: "",
                 status: "",
                 category: "",
                 image: "",
                 skills: [],
-                skills_array: [Array(20).fill(false)],
+                skills_array: [Array(3).fill(false)],
             });
 
             //fetch
@@ -83,11 +83,11 @@ const EditProject = () => {
                     const checks = [];
 
                     data.forEach(g => {
-                        checks.push({id: g.id, checked: false, skill: g.skill});
+                        checks.push({id: g.id, checked: false, skill_name: g.skill_name});
                     })
 
-                    setProject(m => ({
-                        ...m,
+                    setProject(p => ({
+                        ...p,
                         skills: checks,
                         skills_array: [],
                     }))
@@ -118,9 +118,9 @@ const EditProject = () => {
 
                     data.skills.forEach(g => {
                         if (data.project.skills_array.indexOf(g.id) !== -1) {
-                            checks.push({id: g.id, checked: true, skill: g.skill});
+                            checks.push({id: g.id, checked: true, skill_name: g.skill_name});
                         } else {
-                            checks.push({id: g.id, checked: false, skill: g.skill});
+                            checks.push({id: g.id, checked: false, skill_name: g.skill_name});
                         }
                     })
 
@@ -241,6 +241,48 @@ const EditProject = () => {
         })
     }
 
+    //// 新增技能
+    const [newSkillName, setNewSkillName] = useState("");
+    //WARNING
+    // eslint-disable-next-line no-unused-vars
+    const [skillList, setSkillList] = useState([]); 
+    // 取得skillList
+    const fetchSkills = useCallback(() => {
+        fetch(`${process.env.REACT_APP_BACKEND}/skills`)
+            .then(response => response.json())
+            .then(data => setSkillList(data))
+            .catch(error => console.error("Fetching skills failed", error));
+    }, [setSkillList]); 
+
+    useEffect(() => {
+        fetchSkills();
+    }, [fetchSkills]);
+
+    const handleAddSkill = (newSkillName) => {
+        
+        const headers = new Headers();
+        headers.append("Content-Type", "application/json");
+        headers.append("Authorization", "Bearer " + jwtToken);
+    
+        const body = JSON.stringify({ skill_name: newSkillName });
+    
+        fetch(`${process.env.REACT_APP_BACKEND}/skills`, {
+            method: "POST",
+            headers: headers,
+            body: body,
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            if (!data.error) {
+                console.log("Skill added:", data);
+                fetchSkills();
+            }
+            console.error(data.error);
+        })
+        .catch(error => console.error("Adding new skill failed", error));
+    };
+    //
+
     const confirmDelete = () => {
         Swal.fire({
             title: 'Delete project?',
@@ -304,7 +346,7 @@ const EditProject = () => {
                     className={"form-control"}
                     type={"text"}
                     name={"technology_stack"}
-                    value={project.technology_stack}
+                    value={project.technology_stack||''}
                     onChange={handleChange("technology_stack")}
                     errorDiv={hasError("technology_stack") ? "text-danger" : "d-none"}
                     errorMsg={"Please enter a technology_stack"}
@@ -361,10 +403,10 @@ const EditProject = () => {
                     <>
                         {Array.from(project.skills).map((g, index) =>
                             <Checkbox
-                                title={g.skill}
-                                name={"skill"}
+                                title={g.skill_name}
+                                name={"skill_name"}
                                 key={index}
-                                id={"skill-" + index}
+                                id={"skill_name-" + index}
                                 onChange={(event) => handleCheck(event, index)}
                                 value={g.id}
                                 checked={project.skills[index].checked}
@@ -372,6 +414,15 @@ const EditProject = () => {
                         )}
                     </>
                 }
+
+                <div>
+                    <input 
+                        type="text" 
+                        value={newSkillName} 
+                        onChange={(e) => setNewSkillName(e.target.value)} 
+                    />
+                    <button type="button" onClick={() => handleAddSkill(newSkillName)}>+</button>
+                </div>
 
                 <hr />
 

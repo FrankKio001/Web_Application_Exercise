@@ -34,6 +34,7 @@ func (app *application) routes() http.Handler {
 		mux.Get("/projects", app.ProjectCatalog)
 		mux.Get("/projects/{id}", app.ProjectForEdit)
 		mux.Put("/projects/0", app.InsertProject)
+		mux.Post("/skills", app.InsertSkill)
 		mux.Patch("/projects/{id}", app.UpdateProject)
 		mux.Delete("/projects/{id}", app.DeleteProject)
 	})

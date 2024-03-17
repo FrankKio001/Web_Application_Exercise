@@ -16,6 +16,7 @@ type DatabaseRepo interface {
 	OneProject(id int) (*models.Project, error)
 	AllSkills() ([]*models.Skill, error)
 	InsertProject(project models.Project) (int, error)
+	InsertSkill(skill models.Skill) (int, error)
 	UpdateProjectSkills(id int, skillIDs []int) error
 	UpdateProject(project models.Project) error
 	DeleteProject(id int) error
