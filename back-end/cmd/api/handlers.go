@@ -315,14 +315,14 @@ func (app *application) AllProjectsBySkill(w http.ResponseWriter, r *http.Reques
 
 func (app *application) projectsGraphQL(w http.ResponseWriter, r *http.Request) {
 	// we need to populate our Graph type with the projects
-	projects, _ := app.DB.AllProjects()
+	//projects, _ := app.DB.AllProjects()
 
 	// get the query from the request
 	q, _ := io.ReadAll(r.Body)
 	query := string(q)
 
 	// create a new variable of type *graph.Graph
-	g := graph.New(projects)
+	g := graph.New(app.DB)
 
 	// set the query string on the variable
 	g.QueryString = query

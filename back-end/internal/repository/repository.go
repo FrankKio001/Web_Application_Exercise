@@ -11,6 +11,7 @@ type DatabaseRepo interface {
 	GetUserByEmail(email string) (*models.User, error)
 	GetUserByID(id int) (*models.User, error)
 
+	LoadProjectsWithSkills() ([]*models.Project, error)
 	OneProjectForEdit(id int) (*models.Project, []*models.Skill, error)
 	OneProject(id int) (*models.Project, error)
 	AllSkills() ([]*models.Skill, error)

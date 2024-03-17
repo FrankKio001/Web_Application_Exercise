@@ -69,11 +69,68 @@ func (m *PostgresDBRepo) AllProjects(skill ...int) ([]*models.Project, error) {
 	return projects, nil
 }
 
+// LoadProjectsWithSkills fetches all projects along with their associated skills.
+func (m *PostgresDBRepo) LoadProjectsWithSkills() ([]*models.Project, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `
+        SELECT p.id, p.title, p.description, p.technology_stack, p.status, p.category, p.image, p.created_at, p.updated_at,
+               s.id AS skill_id, s.skill_name
+        FROM projects p
+        LEFT JOIN projects_skills ps ON p.id = ps.project_id
+        LEFT JOIN skills s ON ps.skill_id = s.id
+        ORDER BY p.id, s.id;
+    `
+
+	rows, err := m.DB.QueryContext(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("error executing query: %w", err)
+	}
+	defer rows.Close()
+
+	// A map to keep track of projects we've already seen
+	projectMap := make(map[int]*models.Project)
+	var projects []*models.Project
+
+	for rows.Next() {
+		var p models.Project
+		var skillID sql.NullInt64
+		var skillName sql.NullString
+
+		// Scan the data into the Project struct and the skill variables
+		err := rows.Scan(&p.ID, &p.Title, &p.Description, &p.TechnologyStack, &p.Status, &p.Category, &p.Image, &p.CreatedAt, &p.UpdatedAt,
+			&skillID, &skillName)
+		if err != nil {
+			return nil, fmt.Errorf("error scanning row: %w", err)
+		}
+
+		// If we haven't seen this project before, initialize its Skills slice and add it to the map
+		if _, seen := projectMap[p.ID]; !seen {
+			p.Skills = []*models.Skill{}
+			projectMap[p.ID] = &p
+			projects = append(projects, &p)
+		}
+
+		// If the skill is not null, add it to the project's Skills
+		if skillID.Valid && skillName.Valid {
+			projectMap[p.ID].Skills = append(projectMap[p.ID].Skills, &models.Skill{ID: int(skillID.Int64), Name: skillName.String})
+		}
+	}
+
+	// Check for errors from iterating over rows
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating rows: %w", err)
+	}
+
+	return projects, nil
+}
+
 func (m *PostgresDBRepo) OneProject(id int) (*models.Project, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
-	query := `id, title, description, technology_stack,
+	query := `select id, title, description, technology_stack,
 		status, category, coalesce(image, ''),created_at, updated_at
 		from projects where id = $1`
 
@@ -98,7 +155,7 @@ func (m *PostgresDBRepo) OneProject(id int) (*models.Project, error) {
 	}
 
 	// get skills, if any
-	query = `select g.id, g.skill from projects_skills mg
+	query = `select g.id, g.skill_name from projects_skills mg
 		left join skills g on (mg.skill_id = g.id)
 		where mg.project_id = $1
 		order by g.skill_name`
@@ -157,7 +214,7 @@ func (m *PostgresDBRepo) OneProjectForEdit(id int) (*models.Project, []*models.S
 	}
 
 	// get skills, if any
-	query = `select g.id, g.skill from projects_skills mg
+	query = `select g.id, g.skill_name from projects_skills mg
 		left join skills g on (mg.skill_id = g.id)
 		where mg.project_id = $1
 		order by g.skill_name`
@@ -190,7 +247,7 @@ func (m *PostgresDBRepo) OneProjectForEdit(id int) (*models.Project, []*models.S
 
 	var allSkills []*models.Skill
 
-	query = "select id, skill from skills order by skill"
+	query = "select id, skill_name from skills order by skill_name"
 	gRows, err := m.DB.QueryContext(ctx, query)
 	if err != nil {
 		return nil, nil, err
@@ -271,7 +328,7 @@ func (m *PostgresDBRepo) AllSkills() ([]*models.Skill, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
-	query := `select id, skill from skills order by skill`
+	query := `select id, skill_name from skills order by skill_name`
 
 	rows, err := m.DB.QueryContext(ctx, query)
 	if err != nil {

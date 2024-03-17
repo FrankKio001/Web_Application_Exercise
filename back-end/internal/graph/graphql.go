@@ -2,7 +2,9 @@ package graph
 
 import (
 	"backend/internal/models"
+	"backend/internal/repository"
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/graphql-go/graphql"
@@ -10,17 +12,36 @@ import (
 
 // Graph is the type for our graphql operations
 type Graph struct {
-	Projects    []*models.Project
+	Repo        repository.DatabaseRepo
 	QueryString string
 	Config      graphql.SchemaConfig
 	fields      graphql.Fields
 	projectType *graphql.Object
+	//skillType   *graphql.Object
 }
 
 // New is the factory method to create a new instance of the Graph type.
-func New(projects []*models.Project) *Graph {
-
+func New(repo repository.DatabaseRepo) *Graph {
+	projects, err := repo.LoadProjectsWithSkills()
+	if err != nil {
+		fmt.Println("Error loading projects with skills:", err)
+		return nil // 这里应该处理错误，而不是直接返回nil
+	}
 	// Define the object for our project. The fields match database field names.
+	//需要的資料
+	var skillType = graphql.NewObject(
+		graphql.ObjectConfig{
+			Name: "Skill",
+			Fields: graphql.Fields{
+				"id": &graphql.Field{
+					Type: graphql.Int,
+				},
+				"skill_name": &graphql.Field{
+					Type: graphql.String,
+				},
+			},
+		},
+	)
 	var projectType = graphql.NewObject(
 		graphql.ObjectConfig{
 			Name: "Project",
@@ -38,7 +59,7 @@ func New(projects []*models.Project) *Graph {
 					Type: graphql.String,
 				},
 				"status": &graphql.Field{
-					Type: graphql.Int,
+					Type: graphql.String,
 				},
 				"category": &graphql.Field{
 					Type: graphql.String,
@@ -51,6 +72,16 @@ func New(projects []*models.Project) *Graph {
 				},
 				"image": &graphql.Field{
 					Type: graphql.String,
+				},
+				"skills": &graphql.Field{
+					Type: graphql.NewList(skillType),
+					Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+						project, ok := p.Source.(*models.Project)
+						if !ok || project.Skills == nil {
+							return []*models.Skill{}, nil
+						}
+						return project.Skills, nil
+					},
 				},
 			},
 		},
@@ -81,7 +112,9 @@ func New(projects []*models.Project) *Graph {
 				if ok {
 					// 遍歷所有項目
 					for _, currentProject := range projects {
+						//fmt.Printf("Checking project: %s %s\n", currentProject.Title, search)
 						for _, skill := range currentProject.Skills {
+							//fmt.Printf("Checking skill: %s 1\n", skill.Name)//debug
 							// 搜索條件
 							if strings.Contains(strings.ToLower(skill.Name), strings.ToLower(search)) {
 								theList = append(theList, currentProject)
@@ -118,7 +151,8 @@ func New(projects []*models.Project) *Graph {
 
 	// return a pointer to the Graph type, populated with the correct information
 	return &Graph{
-		Projects:    projects,
+		//Projects:    projects,
+		Repo:        repo,
 		fields:      fields,
 		projectType: projectType,
 	}

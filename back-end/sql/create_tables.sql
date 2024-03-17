@@ -21,43 +21,11 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: skills; Type: TABLE; Schema: public; Owner: -
---
-CREATE TABLE skills (
-    id SERIAL PRIMARY KEY, 
-    skill_name VARCHAR(255) NOT NULL 
-);
---
--- Name: projects; Type: TABLE; Schema: public; Owner: -
---
-CREATE TABLE projects (
-    id integer NOT NULL,
-    title character varying(512),
-    description text,
-    technology_stack TEXT NOT NULL, -- Technologies used in the project
-    status INTEGER NOT NULL, -- Status of the project (e.g., ongoing, completed)
-    category VARCHAR(10) NOT NULL -- Category of the project (e.g., personal, professional)
-    image character varying(255),
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone
-);
-
---
--- Name: projects_skills; Type: TABLE; Schema: public; Owner: -
---
-CREATE TABLE projects_skills (
-    project_id INTEGER REFERENCES projects(id), -- ID of the project
-    skill_id INTEGER REFERENCES skills(id), -- ID of the skill
-    PRIMARY KEY (project_id, skill_id) -- Composite primary key to ensure unique pairs
-);
-
-
---
 -- Name: users; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.users (
-    id integer NOT NULL,
+    id SERIAL PRIMARY KEY,
     first_name character varying(255),
     last_name character varying(255),
     email character varying(255),
@@ -66,42 +34,72 @@ CREATE TABLE public.users (
     updated_at timestamp without time zone
 );
 
-
---
--- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-ALTER TABLE public.users ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME public.users_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1
-);
-
-
 --
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public.users (id, first_name, last_name, email, password, created_at, updated_at) FROM stdin;
-1	Admin	User	admin@example.com	$2a$14$wVsaPvJnJJsomWArouWCtusem6S/.Gauq/GjOIEHpyh2DAMmso1wy	2024-03-16 00:00:00	2022-03-16 00:00:00
+COPY public.users (first_name, last_name, email, password, created_at, updated_at) FROM stdin;
+Admin	User	admin@example.com	$2a$14$wVsaPvJnJJsomWArouWCtusem6S/.Gauq/GjOIEHpyh2DAMmso1wy	2022-09-23 00:00:00	2022-09-23 00:00:00
 \.
 
 --
--- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+-- Name: skills; Type: TABLE; Schema: public; Owner: -
 --
-
-SELECT pg_catalog.setval('public.users_id_seq', 1, true);
-
+CREATE TABLE public.skills (
+    id SERIAL PRIMARY KEY,
+    skill_name VARCHAR(255) NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
 
 --
--- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Data for Name: skills; Type: TABLE DATA; Schema: public; Owner: -
 --
+COPY public.skills (skill_name, created_at, updated_at) FROM stdin;
+Go  2022-09-23 00:00:00	2022-09-23 00:00:00
+C   2022-09-23 00:00:00	2022-09-23 00:00:00
+C++ 2022-09-23 00:00:00	2022-09-23 00:00:00
+\.
 
-ALTER TABLE ONLY public.users
-    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+--
+-- Name: projects; Type: TABLE; Schema: public; Owner: -
+--
+CREATE TABLE public.projects (
+    id SERIAL PRIMARY KEY,
+    title character varying(512),
+    description text,
+    technology_stack TEXT NOT NULL,
+    status VARCHAR(10) NOT NULL,
+    category VARCHAR(10) NOT NULL,
+    image character varying(255),
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+--
+-- Name: projects_skills; Type: TABLE; Schema: public; Owner: -
+--
+CREATE TABLE public.projects_skills (
+    id SERIAL PRIMARY KEY,
+    project_id integer REFERENCES public.projects(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    skill_id integer REFERENCES public.skills(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+--
+-- Data for Name: projects; Type: TABLE DATA; Schema: public; Owner: -
+--
+COPY public.projects (title, description, technology_stack, status, category, image, created_at, updated_at) FROM stdin;
+PJ1     He fought his first battle on the Scottish Highlands in 1536. He will fight his greatest battle on the streets of New York City in 1986. His name is Connor MacLeod. He is immortal.	    fullstack	    ongoing	    college	    media.themoviedb.org/t/p/w300_and_h450_bestv2/8Z8dptJEypuLoOQro1WugD855YE.jpg	    2022-09-23 00:00:00	    2022-09-23 00:00:00
+\.
+
+--
+-- Data for Name: projects_skills; Type: TABLE DATA; Schema: public; Owner: -
+--
+COPY public.projects_skills (project_id, skill_id) FROM stdin;
+1	1
+1	2
+\.
+
 --
 -- PostgreSQL database dump complete
 --

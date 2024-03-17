@@ -5,9 +5,11 @@ import (
 )
 
 type Skill struct {
-	ID      int    `json:"id"`
-	Name    string `json:"skill_name"`
-	Checked bool   `json:"checked"`
+	ID        int       `json:"id"`
+	Name      string    `json:"skill_name"`
+	Checked   bool      `json:"checked"`
+	CreatedAt time.Time `json:"-"`
+	UpdatedAt time.Time `json:"-"`
 }
 
 type Project struct {
@@ -15,7 +17,7 @@ type Project struct {
 	Title           string    `json:"title"`
 	Description     string    `json:"description"`
 	TechnologyStack string    `json:"technology_stack"`
-	Status          int       `json:"status"`
+	Status          string    `json:"status"`
 	Category        string    `json:"category"`
 	Image           string    `json:"image"`
 	CreatedAt       time.Time `json:"created_at"`
@@ -23,3 +25,9 @@ type Project struct {
 	Skills          []*Skill  `json:"skills,omitempty"`
 	SkillsArray     []int     `json:"skills_array,omitempty"`
 }
+
+//Category : college,personal,indie team
+//status : ongoing...
+
+//TechnologyStack : fullstuck,mobile apps,web app,web3...
+//skill : programming language + technical structure + software
