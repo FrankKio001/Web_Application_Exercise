@@ -39,7 +39,7 @@ const EditProject = () => {
         category: "",
         image: "",
         skills: [],
-        skills_array: [Array(3).fill(false)],
+        skills_array: [],
     });
 
     // get id from the URL
@@ -65,7 +65,7 @@ const EditProject = () => {
                 category: "",
                 image: "",
                 skills: [],
-                skills_array: [Array(3).fill(false)],
+                skills_array: [],
             });
 
             //fetch
@@ -228,7 +228,7 @@ const EditProject = () => {
         let tmpArr = project.skills;
         tmpArr[position].checked = !tmpArr[position].checked;
 
-        let tmpIDs = project.skills_array;
+        let tmpIDs = project.skills_array.slice();// 複製陣列以避免直接修改狀態
         if (!event.target.checked) {
             tmpIDs.splice(tmpIDs.indexOf(event.target.value));
         } else {
@@ -246,27 +246,40 @@ const EditProject = () => {
     //WARNING
     // eslint-disable-next-line no-unused-vars
     const [skillList, setSkillList] = useState([]); 
+
     // 取得skillList
     const fetchSkills = useCallback(() => {
-        fetch(`${process.env.REACT_APP_BACKEND}/skills`)
+        fetch(`${process.env.REACT_APP_BACKEND}/skills`,{
+            headers: {Authorization: `Bearer ${jwtToken}`,},
+        })
             .then(response => response.json())
-            .then(data => setSkillList(data))
+            .then(data => {
+                // 更新 project狀態以包含最新的技能列表
+                const updatedSkills = data.map(skill => ({
+                    id: skill.id,
+                    checked: project.skills_array.includes(skill.id),
+                    skill_name: skill.skill_name,
+                }));
+                setProject(prev => ({ ...prev, skills: updatedSkills }));
+            })
             .catch(error => console.error("Fetching skills failed", error));
-    }, [setSkillList]); 
+    }, [jwtToken, project.skills_array]); 
 
     useEffect(() => {
-        fetchSkills();
-    }, [fetchSkills]);
+        if (!jwtToken) navigate('/login');
+        else fetchSkills();
+    }, [fetchSkills, jwtToken, navigate]);
 
-    const handleAddSkill = (newSkillName) => {
-        
+    const handleAddSkill = () => {
+        if (!newSkillName.trim()) return;// 空白技能
+
         const headers = new Headers();
         headers.append("Content-Type", "application/json");
         headers.append("Authorization", "Bearer " + jwtToken);
     
         const body = JSON.stringify({ skill_name: newSkillName });
     
-        fetch(`${process.env.REACT_APP_BACKEND}/skills`, {
+        fetch(`${process.env.REACT_APP_BACKEND}/admin/skills`, {
             method: "POST",
             headers: headers,
             body: body,
@@ -275,7 +288,8 @@ const EditProject = () => {
         .then((data) => {
             if (!data.error) {
                 console.log("Skill added:", data);
-                fetchSkills();
+                setNewSkillName('');
+                fetchSkills()
             }
             console.error(data.error);
         })
@@ -416,12 +430,13 @@ const EditProject = () => {
                 }
 
                 <div>
-                    <input 
-                        type="text" 
-                        value={newSkillName} 
-                        onChange={(e) => setNewSkillName(e.target.value)} 
+                    <input
+                        type="text"
+                        value={newSkillName}
+                        onChange={e => setNewSkillName(e.target.value)}
+                        placeholder="New skill name"
                     />
-                    <button type="button" onClick={() => handleAddSkill(newSkillName)}>+</button>
+                    <button type="button" onClick={handleAddSkill}>Add New Skill</button>
                 </div>
 
                 <hr />

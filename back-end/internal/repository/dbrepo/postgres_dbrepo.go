@@ -394,10 +394,10 @@ func (m *PostgresDBRepo) InsertSkill(skill models.Skill) (int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
-	stmt := `INSERT INTO skills (skill_name) VALUES ($1) RETURNING id`
+	stmt := `INSERT INTO skills (skill_name, created_at, updated_at) VALUES ($1, $2, $3) RETURNING id`
 
 	var newID int
-	err := m.DB.QueryRowContext(ctx, stmt, skill.Name).Scan(&newID)
+	err := m.DB.QueryRowContext(ctx, stmt, skill.Name, time.Now(), time.Now()).Scan(&newID)
 	if err != nil {
 		return 0, err
 	}
