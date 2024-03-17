@@ -190,7 +190,7 @@ func (m *PostgresDBRepo) OneProjectForEdit(id int) (*models.Project, []*models.S
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
-	query := `id, title, description, technology_stack,
+	query := `SELECT id, title, description, technology_stack,
 		status, category, coalesce(image, ''),created_at, updated_at
 		from projects where id = $1`
 

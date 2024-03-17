@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import Ticket from "./../images/movie_tickets.jpg";
+import Bird from "./../images/bird.png";
 
 const Home = () => {
   return (
@@ -8,7 +8,11 @@ const Home = () => {
         <h2>DAMN</h2>
         <hr />
         <Link to="/projects">
-          <img src={Ticket} alt="project tickets"></img>
+          <img 
+            src={Bird} 
+            alt="project birds"
+            style={{ maxWidth: '10%', maxHeight: '10%' }} // 添加这行样式
+          />
         </Link>
       </div>
     </>
