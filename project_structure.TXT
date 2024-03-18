@@ -1,0 +1,43 @@
+back-end/
+	cmd/api/
+		auto.go
+		db.go
+		handlers.go
+		main.go
+		middleware.go
+		routes.go
+		utils.go
+	internal/
+		graph/graphql.go
+		models/
+			Project.go
+			User.go
+		repository/
+			repository.go
+			dbrepo/postgres_dbrepo.go
+	Dockerfile
+
+			
+front-end
+	.env
+	src/
+		App.js
+		index.js
+		components/
+			alert.js
+			EditProject.js
+			ErrorPage.js
+			Skills.js
+			GraphQL.js
+			Home.js
+			login.js
+			ManageCatalogue.js
+			Project.js
+			Projects.js
+			OneSkill.js
+			from/
+				Checkbox.js
+				Input.js
+				Select.js
+				TextArea.js
+

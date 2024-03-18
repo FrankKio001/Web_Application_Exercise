@@ -116,7 +116,7 @@ func New(repo repository.DatabaseRepo) *Graph {
 						for _, skill := range currentProject.Skills {
 							//fmt.Printf("Checking skill: %s 1\n", skill.Name)//debug
 							// 搜索條件
-							if strings.Contains(strings.ToLower(skill.Name), strings.ToLower(search)) {
+							if strings.EqualFold(skill.Name, search) {
 								theList = append(theList, currentProject)
 								break
 							}
