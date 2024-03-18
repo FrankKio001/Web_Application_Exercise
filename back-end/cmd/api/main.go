@@ -3,10 +3,10 @@ package main
 import (
 	"backend/internal/repository"
 	"backend/internal/repository/dbrepo"
-	"flag"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -24,17 +24,37 @@ type application struct {
 }
 
 func main() {
-	// set application config
-	var app application
+	log.Println("JWT Secret:", os.Getenv("JWT_SECRET"))
+	log.Println("JWT Issuer:", os.Getenv("JWT_ISSUER"))
+	log.Println("JWT Audience:", os.Getenv("JWT_AUDIENCE"))
 
-	// read from command line
-	flag.StringVar(&app.DSN, "dsn", "host=localhost port=5432 user=MRKIOpostgres password=MRKIOpostgres dbname=MRKIODB sslmode=disable timezone=UTC connect_timeout=5", "Postgres connection string")
-	flag.StringVar(&app.JWTSecret, "jwt-secret", "verysecret", "signing secret")
-	flag.StringVar(&app.JWTIssuer, "jwt-issuer", "example.com", "signing issuer")
-	flag.StringVar(&app.JWTAudience, "jwt-audience", "example.com", "signing audience")
-	flag.StringVar(&app.CookieDomain, "cookie-domain", "localhost", "cookie domain")
-	flag.StringVar(&app.Domain, "domain", "example.com", "domain")
-	flag.Parse()
+	app := application{
+		// 從環境變數中讀取資料庫配置訊息
+		JWTSecret:    os.Getenv("JWT_SECRET"),
+		JWTIssuer:    os.Getenv("JWT_ISSUER"),
+		JWTAudience:  os.Getenv("JWT_AUDIENCE"),
+		CookieDomain: "localhost", // 根據需要
+		DSN: fmt.Sprintf(
+			"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+			os.Getenv("DB_HOST"),
+			os.Getenv("DB_PORT"),
+			os.Getenv("DB_USER"),
+			os.Getenv("DB_PASSWORD"),
+			os.Getenv("DB_NAME"),
+		),
+	}
+
+	// // set application config
+	// var app application
+
+	// // read from command line
+	// flag.StringVar(&app.DSN, "dsn", "host=localhost port=5432 user=MRKIOpostgres password=MRKIOpostgres dbname=MRKIODB sslmode=disable timezone=UTC connect_timeout=5", "Postgres connection string")
+	// flag.StringVar(&app.JWTSecret, "jwt-secret", "verysecret", "signing secret")
+	// flag.StringVar(&app.JWTIssuer, "jwt-issuer", "example.com", "signing issuer")
+	// flag.StringVar(&app.JWTAudience, "jwt-audience", "example.com", "signing audience")
+	// flag.StringVar(&app.CookieDomain, "cookie-domain", "localhost", "cookie domain")
+	// flag.StringVar(&app.Domain, "domain", "example.com", "domain")
+	// flag.Parse()
 
 	// connect to the database
 	conn, err := app.connectToDB()

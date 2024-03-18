@@ -12,5 +12,5 @@ RUN npm run build
 FROM nginx:alpine
 COPY --from=builder /app/build /usr/share/nginx/html
 # 使用 Nginx 映像檔作為運作環境
-#EXPOSE 3000
+EXPOSE 3000
 CMD ["nginx", "-g", "daemon off;"]

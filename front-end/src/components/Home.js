@@ -5,7 +5,7 @@ const Home = () => {
   return (
     <>
       <div className="text-center">
-        <h2>DAMN</h2>
+        <h2>ongoing</h2>
         <hr />
         <Link to="/projects">
           <img 
