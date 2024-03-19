@@ -1,0 +1,85 @@
+# General
+.DS_Store
+*.log
+*.tmp
+*.temp
+
+# Environment variables
+.env*
+
+# IDE and Editors
+.idea/
+.vscode/
+*.swp
+*~
+*.sublime-workspace
+
+# Node modules and package lock files
+node_modules/
+package-lock.json
+yarn.lock
+
+# Front-end build directory
+front-end/build/
+
+# Go specific
+back-end/bin/
+back-end/vendor/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Compiled Go binaries
+back-end/cmd/api/api
+back-end/cmd/api/api.exe
+
+# Dependency directories (uncomment if vendor is not checked in)
+# back-end/vendor/
+
+# PostgreSQL data directory (if not intended for repo)
+postgres-data/
+
+# Cache files for various tools
+*.cache
+*.log
+
+# Dependency directories for front-end
+front-end/node_modules/
+
+# Coverage directory used by tools like Istanbul
+coverage/
+
+# MacOS folder attributes
+._*
+
+# Files that might appear in the root
+*.core
+
+# Docker volumes
+volumes/
+
+# Docker Compose overrides file
+docker-compose.override.yml
+
+# Temp files
+*.tmp
+*.temp
+*.swp
+
+# Logs
+logs/
+*.log
+
+# Docker specific
+Dockerfile
+*.dockerignore
+
+# SQL scripts (if sensitive or not needed in repo)
+sql/
+
+# Project structure text file
+Project_strucre.TXT

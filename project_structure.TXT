@@ -41,3 +41,10 @@ front-end
 				Select.js
 				TextArea.js
 
+postgres-data/
+
+sql/
+	create_tables.sql
+
+Docker-compose.yml
+Project_strucre.TXT
