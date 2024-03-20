@@ -22,7 +22,7 @@ jobs:
       
     - name: Build and push backend and frontend Docker images
       run: |
-        docker-compose build backend
-        docker-compose build frontend
-        docker-compose push
+        docker-compose build backend --tag hohokio12/mr.kio:latest
+        docker-compose build frontend --tag hohokio12/mr.kio:latest
+        docker-compose push hohokio12/mr.kio:latest
   
