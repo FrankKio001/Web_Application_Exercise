@@ -22,6 +22,6 @@ jobs:
       
     - name: Build and push Docker images
       run: |
-        docker-compose build
-        docker-compose push
+        docker-compose build --tag hohokio12/mr.kio:latest
+        docker-compose push hohokio12/mr.kio:latest
   
