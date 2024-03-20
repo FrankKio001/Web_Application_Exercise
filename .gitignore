@@ -75,8 +75,8 @@ logs/
 *.log
 
 # Docker specific
-Dockerfile
-*.dockerignore
+#Dockerfile
+#*.dockerignore
 
 # SQL scripts (if sensitive or not needed in repo)
 sql/
