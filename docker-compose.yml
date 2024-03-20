@@ -39,6 +39,8 @@ services:
       JWT_ISSUER: myapp.com
       JWT_AUDIENCE: myapp_users
       TZ: Asia/Taipei
+      CORS_ALLOW_ORIGIN: http://13.210.118.229:3000 #前端
+      COOKIE_DOMAIN: yourdomain.com
 
   frontend:
     image: hohokio12/mr.kio:frontend-latest
