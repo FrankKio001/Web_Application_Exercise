@@ -20,8 +20,8 @@ jobs:
         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
       run : echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
       
-    - name: Build the Docker image
-      run: docker build . --tag hohokio12/mr.kio:latest
-    - name: Push to Dockerhub
-      run: docker push hohokio12/mr.kio:latest
+    - name: Build and push Docker images
+      run: |
+        docker-compose build
+        docker-compose push
   
