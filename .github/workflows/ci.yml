@@ -22,7 +22,6 @@ jobs:
       
     - name: Build and push backend and frontend Docker images
       run: |
-        docker-compose build backend
-        docker-compose build frontend
+        docker-compose build
         docker-compose push
   

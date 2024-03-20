@@ -20,6 +20,7 @@ services:
       - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
 
   backend:
+    image: hohokio12/mr.kio:backend-latest
     build: 
       context: ./back-end
       dockerfile: Dockerfile
@@ -40,6 +41,7 @@ services:
       TZ: Asia/Taipei
 
   frontend:
+    image: hohokio12/mr.kio:frontend-latest
     build: 
       context: ./front-end
       dockerfile: Dockerfile
