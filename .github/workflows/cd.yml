@@ -22,12 +22,12 @@ jobs:
 
     - name: Pull the latest images
       run: |
-        docker-compose pull
+        docker compose pull
 
     - name: Stop and remove any existing containers
       run: |
-        docker-compose down
+        docker compose down
 
     - name: Start the new containers
       run: |
-        docker-compose up -d
+        docker compose up -d
