@@ -21,7 +21,7 @@ jobs:
       run : echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
       
     - name: Build the Docker image
-      run: docker build --tag KioWebside:$(date +%s) .
+      run: docker build . --tag hohokio12/mr.kio:latest
     - name: Push to Dockerhub
       run: docker push hohokio12/mr.kio:latest
   
