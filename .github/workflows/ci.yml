@@ -23,5 +23,5 @@ jobs:
     - name: Build the Docker image
       run: docker build --tag KioWebside:$(date +%s) .
     - name: Push to Dockerhub
-      run: docker push hohokio12/MrKio:latest
+      run: docker push hohokio12/mr.kio:latest
   
