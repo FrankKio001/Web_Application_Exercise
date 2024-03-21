@@ -2,13 +2,22 @@ package main
 
 import (
 	"net/http"
-	"os"
 )
 
 func (app *application) enableCORS(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		//w.Header().Set("Access-Control-Allow-Origin", "http://localhost") //本地用
-		w.Header().Set("Access-Control-Allow-Origin", os.Getenv("CORS_ALLOW_ORIGIN"))
+		origin := r.Header.Get("Origin")
+		allowedOrigins := []string{
+			"http://www.mrkio.online",
+			"http://13.210.118.229",
+			"http://localhost",
+		}
+		for _, allowedOrigin := range allowedOrigins {
+			if origin == allowedOrigin {
+				w.Header().Set("Access-Control-Allow-Origin", origin)
+				break
+			}
+		}
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 
 		if r.Method == "OPTIONS" {
