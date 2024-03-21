@@ -30,11 +30,11 @@ func main() {
 
 	app := application{
 		// 從環境變數中讀取資料庫配置訊息
-		JWTSecret:    os.Getenv("JWT_SECRET"),
-		JWTIssuer:    os.Getenv("JWT_ISSUER"),
-		JWTAudience:  os.Getenv("JWT_AUDIENCE"),
-		CookieDomain: "localhost", // 根據需要
-		//CookieDomain: os.Getenv("COOKIE_DOMAIN"),
+		JWTSecret:   os.Getenv("JWT_SECRET"),
+		JWTIssuer:   os.Getenv("JWT_ISSUER"),
+		JWTAudience: os.Getenv("JWT_AUDIENCE"),
+		//CookieDomain: "localhost", // 根據需要
+		CookieDomain: os.Getenv("COOKIE_DOMAIN"),
 		DSN: fmt.Sprintf(
 			"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 			os.Getenv("DB_HOST"),
