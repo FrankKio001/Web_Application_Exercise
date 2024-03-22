@@ -49,7 +49,7 @@ const Project = () => {
 
             {project.image !== "" &&
                 <div className="mb-3">
-                    <img src={`{BaseURL}/${project.image}`} alt="poster" />
+                    <img src={`${project.image}`} alt="poster" />
                 </div>
             }
 

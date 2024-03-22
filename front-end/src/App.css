@@ -1,38 +1,84 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  min-height: 80px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  padding: 10px 20px;
   color: white;
 }
 
 .App-link {
   color: #61dafb;
 }
+.header-center{
+  justify-content: center;
+  align-items: center;
+}
+.header-left {
+  justify-content: left;
+}
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.header-right{
+  justify-content: right;
+}
+
+.line-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.line {
+  position: relative;
+  display: inline-block;
+  padding: 0 20px;
+}
+.line::before, .line::after {
+  content: '';
+  position: absolute;
+  bottom: 50%;
+  transform: translateY(50%);
+  width: 100%;
+  height: 1px;
+  background-color: #ddd;
+}
+
+.line::before {
+  left: -100%;
+}
+
+.line::after {
+  right: -100%;
+}
+
+.skill-select {
+  background-color: rgba(255, 255, 255, 0.5);
+  border: 1px solid #ced4da;
+  appearance: none;
+  width: auto;
+}
+
+.animation {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: rgb(8, 8, 8);
+  font-size: 40px; /* 注意：在CSS中，属性值不应加引号 */
+  white-space: nowrap;
+  overflow: hidden;
+  /* animation: "fadeInOut 1s infinite";
+  border-right: .15em solid orange;  */
+}
+
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent; }
+  50% { border-color: orange; }
 }

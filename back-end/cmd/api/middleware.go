@@ -11,6 +11,7 @@ func (app *application) enableCORS(h http.Handler) http.Handler {
 			"http://www.mrkio.online",
 			"http://13.210.118.229",
 			"http://localhost",
+			"http://localhost:3000",
 		}
 		for _, allowedOrigin := range allowedOrigins {
 			if origin == allowedOrigin {

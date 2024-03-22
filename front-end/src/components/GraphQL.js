@@ -52,6 +52,7 @@ const GraphQL = () => {
                 technology_stack
                 status
                 category
+                image
                 skills {
                     id
                     skill_name
@@ -103,16 +104,18 @@ const GraphQL = () => {
 
     return(
         <div>
-            <h2>Projects Search by Skill</h2>
-            <hr />
-
+            <div className="line-container">
+                <h6 className="line">SOME OF MY WORK</h6>
+            </div>
             {/* 技能選擇下拉清單 */}
-            <select className="form-select" value={selectedSkill} onChange={handleSkillChange}>
-                <option value="">ALL</option>
-                {skillList.map(skill => (
-                    <option key={skill.id} value={skill.skill_name}>{skill.skill_name}</option>
-                ))}
-            </select>
+            <div className="d-flex justify-content-center">
+                <select className="form-select skill-select" value={selectedSkill} onChange={handleSkillChange}>
+                    <option value="">ALL</option>
+                    {skillList.map(skill => (
+                        <option key={skill.id} value={skill.skill_name}>{skill.skill_name}</option>
+                    ))}
+                </select>
+            </div>
 
             {/* 項目清單 */}
             {projects ? (
