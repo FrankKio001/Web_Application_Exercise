@@ -198,8 +198,11 @@ ALTER TABLE ONLY public.skills ALTER COLUMN id SET DEFAULT nextval('public.skill
 --
 
 COPY public.projects (id, title, description, technology_stack, status, category, image, created_at, updated_at) FROM stdin;
-2	test	test	test	ongoing	personal	test	2024-03-17 15:21:42.410757	2024-03-18 03:11:14.609705
-1	pac-man	game	coming soon	completed	college	0	2024-03-15 23:52:19.077545	2024-03-18 03:45:15.817039
+3	Tower Defense	game	allegro5	completed	college	upload.cc/i1/2024/03/23/lHQaZc.jpg	2024-03-23 15:08:49.900397	2024-03-23 15:08:49.900397
+4	WebPage	web page	fullstack	ongoing	personal	https://upload.cc/i1/2024/03/23/HjGORS.jpg	2024-03-23 15:21:13.506792	2024-03-23 15:26:41.068649
+2	Undergraduate seminar	research	research	completed	college	https://upload.cc/i1/2024/03/23/HjGORS.jpg	2024-03-17 15:21:42.410757	2024-03-23 15:27:51.378867
+1	Pac-Man	game	coming soon	completed	college	0	2024-03-15 23:52:19.077545	2024-03-23 15:28:17.728922
+5	CocosGame	COCOS	TS	completed	college	https://upload.cc/i1/2024/03/23/tWL2cs.jpg	2024-03-23 15:29:29.341459	2024-03-23 15:29:29.341459
 \.
 
 
@@ -208,11 +211,14 @@ COPY public.projects (id, title, description, technology_stack, status, category
 --
 
 COPY public.projects_skills (id, project_id, skill_id) FROM stdin;
-17	2	6
-18	2	1
-19	2	11
-21	1	3
-22	1	2
+24	3	3
+30	4	1
+31	4	11
+32	4	6
+33	4	13
+34	2	12
+35	1	2
+36	5	6
 \.
 
 
@@ -226,6 +232,8 @@ COPY public.skills (id, skill_name, created_at, updated_at) FROM stdin;
 3	C++	2024-03-15 23:39:02.839622	2024-03-15 23:39:02.839622
 6	React.js	2024-03-18 00:23:34.392371	2024-03-18 00:23:34.392371
 11	Docker	2024-03-18 01:47:18.89575	2024-03-18 01:47:18.89575
+12	Research	2024-03-23 15:25:52.086778	2024-03-23 15:25:52.086778
+13	CICD	2024-03-23 15:26:19.338193	2024-03-23 15:26:19.338193
 \.
 
 
@@ -242,21 +250,21 @@ COPY public.users (id, first_name, last_name, email, password, created_at, updat
 -- Name: projects_id_seq; Type: SEQUENCE SET; Schema: public; Owner: MRKIOpostgres
 --
 
-SELECT pg_catalog.setval('public.projects_id_seq', 2, true);
+SELECT pg_catalog.setval('public.projects_id_seq', 5, true);
 
 
 --
 -- Name: projects_skills_id_seq; Type: SEQUENCE SET; Schema: public; Owner: MRKIOpostgres
 --
 
-SELECT pg_catalog.setval('public.projects_skills_id_seq', 22, true);
+SELECT pg_catalog.setval('public.projects_skills_id_seq', 36, true);
 
 
 --
 -- Name: skills_id_seq; Type: SEQUENCE SET; Schema: public; Owner: MRKIOpostgres
 --
 
-SELECT pg_catalog.setval('public.skills_id_seq', 11, true);
+SELECT pg_catalog.setval('public.skills_id_seq', 13, true);
 
 
 --

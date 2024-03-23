@@ -7,6 +7,11 @@
   align-items: center;
   padding: 10px 20px;
   color: white;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
 }
 
 .App-link {
@@ -66,7 +71,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   color: rgb(8, 8, 8);
-  font-size: 40px; /* 注意：在CSS中，属性值不应加引号 */
+  font-size: 40px; 
   white-space: nowrap;
   overflow: hidden;
   /* animation: "fadeInOut 1s infinite";
