@@ -9,7 +9,7 @@ func (app *application) enableCORS(h http.Handler) http.Handler {
 		origin := r.Header.Get("Origin")
 		allowedOrigins := []string{
 			"http://www.mrkio.online",
-			"http://13.210.118.229",
+			"http://3.27.186.104",
 			"http://localhost",
 			"http://localhost:3000",
 		}
