@@ -6,22 +6,24 @@ const Project = () => {
     let { id } = useParams();
 
     useEffect(() => {
-        const headers = new Headers();
-        headers.append("Content-Type", "application/json");
+        if (typeof id !== 'undefined') {
+            const headers = new Headers();
+            headers.append("Content-Type", "application/json");
 
-        const requestOptions = {
-            method: "GET",
-            headers: headers,
+            const requestOptions = {
+                method: "GET",
+                headers: headers,
+            }
+
+            fetch(`${process.env.REACT_APP_BACKEND}/projects/${id}`, requestOptions)
+                .then((response) => response.json())
+                .then((data) => {
+                    setProject(data);
+                })
+                .catch(err => {
+                    console.log(err);
+                })
         }
-
-        fetch(`${process.env.REACT_APP_BACKEND}/projects/${id}`, requestOptions)
-            .then((response) => response.json())
-            .then((data) => {
-                setProject(data);
-            })
-            .catch(err => {
-                console.log(err);
-            })
     }, [id])
 
     if (project.skills) {
@@ -47,9 +49,11 @@ const Project = () => {
                 </div>
             )}
 
-            {project.image !== "" &&
+
+            {/* {project.image && project.image.startsWith("http"||"https") && */}
+            {project.image &&
                 <div className="mb-3">
-                    <img src={`${project.image}`} alt="poster" />
+                    <img src={"https://images.weserv.nl/?url="+"https://drive.usercontent.google.com/download?id=" + project.image} alt="Project poster" />
                 </div>
             }
 
