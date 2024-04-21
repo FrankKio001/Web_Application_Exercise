@@ -22,6 +22,6 @@ jobs:
       
     - name: Build and push backend and frontend Docker images
       run: |
-        docker-compose build
-        docker-compose push
+        docker-compose -f docker-compose.prod.yml build
+        docker-compose -f docker-compose.prod.yml push
   

@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+
+  backend:
+    image: hohokio12/mr.kio:backend-latest
+    build: 
+      context: ./back-end
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    restart: on-failure
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: "mrkiodb.ctc4umagw22v.ap-southeast-2.rds.amazonaws.com" # RDS
+      DB_USER: MRKIOpostgres # RDS
+      DB_PASSWORD: MRKIOpostgres # RDS
+      DB_NAME: MRKIODB # RDS
+      DB_PORT: "5432" 
+      JWT_SECRET: mysupersecretkey
+      JWT_ISSUER: myapp.com
+      JWT_AUDIENCE: myapp_users
+      TZ: Asia/Taipei
+      #CORS_ALLOW_ORIGIN: http://13.210.118.229 #前端
+      COOKIE_DOMAIN: yourdomain.com
+
+  frontend:
+    image: hohokio12/mr.kio:frontend-latest
+    build: 
+      context: ./front-end
+      dockerfile: Dockerfile
+    ports:
+      #- "3000:80"
+      - "80:80"
+    depends_on:
+      - backend
+      
+volumes:
+  postgres-data: 
+  
