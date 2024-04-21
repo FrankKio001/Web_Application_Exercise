@@ -10,8 +10,6 @@ services:
     ports:
       - "8080:8080"
     restart: on-failure
-    depends_on:
-      - postgres
     environment:
       DB_HOST: "mrkiodb.ctc4umagw22v.ap-southeast-2.rds.amazonaws.com" # RDS
       DB_USER: MRKIOpostgres # RDS
@@ -36,6 +34,5 @@ services:
     depends_on:
       - backend
       
-volumes:
-  postgres-data: 
+
   
