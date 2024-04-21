@@ -16,6 +16,7 @@ services:
       DB_PASSWORD: MRKIOpostgres # RDS
       DB_NAME: mrkiodb # RDS
       DB_PORT: "5432" 
+      DB_URL: postgresql://MRKIOpostgres:MRKIOpostgres@mrkiodb.ctc4umagw22v.ap-southeast-2.rds.amazonaws.com:5432/mrkiodb?sslmode=require
       JWT_SECRET: mysupersecretkey
       JWT_ISSUER: myapp.com
       JWT_AUDIENCE: myapp_users
