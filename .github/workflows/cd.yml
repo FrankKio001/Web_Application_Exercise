@@ -30,4 +30,4 @@ jobs:
 
     - name: Start the new containers
       run: |
-        docker compose up -d
+        # docker compose up -d
