@@ -14,7 +14,7 @@ services:
       DB_HOST: "mrkiodb.ctc4umagw22v.ap-southeast-2.rds.amazonaws.com" # RDS
       DB_USER: MRKIOpostgres # RDS
       DB_PASSWORD: MRKIOpostgres # RDS
-      DB_NAME: MRKIODB # RDS
+      DB_NAME: mrkiodb # RDS
       DB_PORT: "5432" 
       JWT_SECRET: mysupersecretkey
       JWT_ISSUER: myapp.com
