@@ -36,7 +36,8 @@ func main() {
 		//CookieDomain: "localhost", // 根據需要
 		CookieDomain: os.Getenv("COOKIE_DOMAIN"),
 		DSN: fmt.Sprintf(
-			"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+			//sslmode 用rds時改成require 本地disable
+			"host=%s port=%s user=%s password=%s dbname=%s sslmode=require",
 			os.Getenv("DB_HOST"),
 			os.Getenv("DB_PORT"),
 			os.Getenv("DB_USER"),

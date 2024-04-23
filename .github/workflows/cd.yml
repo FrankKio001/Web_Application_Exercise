@@ -22,15 +22,15 @@ jobs:
 
     - name: Pull the latest images
       run: |
-        # docker compose -f docker-compose.prod.yml pull
-        docker compose pull
+        docker compose -f docker-compose.prod.yml pull
+        # docker compose pull
 
     - name: Stop and remove any existing containers
       run: |
-        # docker compose -f docker-compose.prod.yml down
-        docker compose down
+        docker compose -f docker-compose.prod.yml down
+        # docker compose down
 
     - name: Start the new containers
       run: |
-        # docker compose -f docker-compose.prod.yml up -d
-        docker compose up -d
+        docker compose -f docker-compose.prod.yml up -d
+        # docker compose up -d
