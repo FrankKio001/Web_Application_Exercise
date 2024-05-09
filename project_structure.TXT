@@ -7,14 +7,25 @@ back-end/
 		middleware.go
 		routes.go
 		utils.go
+		handlers_test.go
+		routes_test.go
+		middleware_test.go
 	internal/
 		graph/graphql.go
 		models/
 			Project.go
+			Project_test.go
 			User.go
+			User_test.go
 		repository/
 			repository.go
-			dbrepo/postgres_dbrepo.go
+			repository_test.go
+			dbrepo/
+				postgres_dbrepo.go
+				postgres_dbrepo_test.go
+			mock/
+				mock_repository.go
+
 	Dockerfile
 
 			

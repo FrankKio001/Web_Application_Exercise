@@ -25,7 +25,7 @@ func New(repo repository.DatabaseRepo) *Graph {
 	projects, err := repo.LoadProjectsWithSkills()
 	if err != nil {
 		fmt.Println("Error loading projects with skills:", err)
-		return nil // 这里应该处理错误，而不是直接返回nil
+		return nil // 處理錯誤
 	}
 	// Define the object for our project. The fields match database field names.
 	//需要的資料
