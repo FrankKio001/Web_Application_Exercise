@@ -3,8 +3,10 @@ package main
 import (
 	"backend/internal/graph"
 	"backend/internal/models"
+	"database/sql"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -158,7 +160,12 @@ func (app *application) GetProject(w http.ResponseWriter, r *http.Request) {
 
 	project, err := app.DB.OneProject(projectID)
 	if err != nil {
-		app.errorJSON(w, err)
+		//app.errorJSON(w, err)
+		if errors.Is(err, sql.ErrNoRows) {
+			app.errorJSON(w, errors.New("project not found"), http.StatusNotFound)
+		} else {
+			app.errorJSON(w, err)
+		}
 		return
 	}
 
@@ -342,7 +349,11 @@ func (app *application) projectsGraphQL(w http.ResponseWriter, r *http.Request) 
 	//projects, _ := app.DB.AllProjects()
 
 	// get the query from the request
-	q, _ := io.ReadAll(r.Body)
+	q, err := io.ReadAll(r.Body)
+	if err != nil {
+		app.errorJSON(w, fmt.Errorf("read body error: %w", err), http.StatusBadRequest)
+		return
+	}
 	query := string(q)
 
 	// create a new variable of type *graph.Graph
@@ -354,12 +365,16 @@ func (app *application) projectsGraphQL(w http.ResponseWriter, r *http.Request) 
 	// perform the query
 	resp, err := g.Query()
 	if err != nil {
-		app.errorJSON(w, err)
+		app.errorJSON(w, fmt.Errorf("GraphQL query error: %w", err), http.StatusBadRequest)
 		return
 	}
 
 	// send the response
-	j, _ := json.MarshalIndent(resp, "", "\t")
+	j, err := json.MarshalIndent(resp, "", "\t")
+	if err != nil {
+		app.errorJSON(w, fmt.Errorf("marshal response error: %w", err), http.StatusInternalServerError)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
