@@ -95,7 +95,7 @@ func TestAuthenticateHandler(t *testing.T) {
 		Password: string(hashedPassword),
 	}
 
-	// 確保只呼叫一次
+	// 呼叫一次
 	mockDB.EXPECT().GetUserByEmail("user@example.com").Return(mockUser, nil).AnyTimes()
 
 	reqBody := strings.NewReader(`{"email":"user@example.com","password":"password"}`)
@@ -120,7 +120,6 @@ func TestAuthenticateHandler(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, rr.Code)
 }
 
-// 假設您的 DB 函數返回特定的 not found 錯誤
 var ErrNotFound = errors.New("project not found")
 
 func TestGetProjectHandler(t *testing.T) {
@@ -131,7 +130,7 @@ func TestGetProjectHandler(t *testing.T) {
 	app := &application{DB: mockDB}
 
 	projectID := 1
-	mockDB.EXPECT().OneProject(projectID).Return(nil, sql.ErrNoRows) // 修改為返回 not found 錯誤
+	mockDB.EXPECT().OneProject(projectID).Return(nil, sql.ErrNoRows)
 
 	req, err := http.NewRequest("GET", fmt.Sprintf("/project/%d", projectID), nil)
 	assert.NoError(t, err)
