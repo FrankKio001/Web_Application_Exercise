@@ -32,7 +32,18 @@ const Login = () => {
         }
 
         fetch(`${process.env.REACT_APP_BACKEND}/authenticate`, requestOptions)
-            .then((response) => response.json())
+            .then((response) => {
+                if (!response.ok) {
+                    if (response.status === 429) {
+                        throw new Error("Too many login attempts. Please try again later.");
+                    } else {
+                        return response.json().then((data) => {
+                            throw new Error(data.message || "An error occurred. Please try again.");
+                        });
+                    }
+                }
+                return response.json();
+            })
             .then((data) => {
                 if (data.error) {
                     setAlertClassName("alert-danger");

@@ -10,6 +10,7 @@ back-end/
 		handlers_test.go
 		routes_test.go
 		middleware_test.go
+		login_limier.go
 	internal/
 		graph/graphql.go
 		models/

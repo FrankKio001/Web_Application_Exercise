@@ -1,6 +1,14 @@
 version: '3'
 
 services:
+  #先用DOCKER之後再改AWS ElastiCache
+  redis:
+    image: 'redis:alpine'
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
 
   backend:
     image: hohokio12/mr.kio:backend-latest
@@ -10,6 +18,8 @@ services:
     ports:
       - "8080:8080"
     restart: on-failure
+    depends_on: #
+      - redis   #
     environment:
       DB_HOST: "mrkiodb.ctc4umagw22v.ap-southeast-2.rds.amazonaws.com" # RDS
       DB_USER: MRKIOpostgres # RDS
@@ -17,6 +27,8 @@ services:
       DB_NAME: mrkiodb # RDS
       DB_PORT: "5432" 
       #DB_URL: postgresql://MRKIOpostgres:MRKIOpostgres@mrkiodb.ctc4umagw22v.ap-southeast-2.rds.amazonaws.com:5432/mrkiodb?sslmode=require
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
       JWT_SECRET: mysupersecretkey
       JWT_ISSUER: myapp.com
       JWT_AUDIENCE: myapp_users
@@ -34,6 +46,6 @@ services:
       - "80:80"
     depends_on:
       - backend
-      
 
-  
+volumes:
+  redis-data:
