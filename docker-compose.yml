@@ -19,6 +19,14 @@ services:
       - postgres-data:/var/lib/postgresql/data
       - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
 
+  redis:
+    image: 'redis:alpine'
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+
   backend:
     image: hohokio12/mr.kio:backend-latest
     build: 
@@ -29,12 +37,15 @@ services:
     restart: on-failure
     depends_on:
       - postgres
+      - redis
     environment:
       DB_HOST: "postgres"
       DB_USER: MRKIOpostgres
       DB_PASSWORD: MRKIOpostgres
       DB_NAME: MRKIODB
       DB_PORT: "5432"
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
       JWT_SECRET: mysupersecretkey
       JWT_ISSUER: myapp.com
       JWT_AUDIENCE: myapp_users
@@ -55,4 +66,4 @@ services:
       
 volumes:
   postgres-data: 
-  
+  redis-data:

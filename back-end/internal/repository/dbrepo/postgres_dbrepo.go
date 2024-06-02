@@ -2,20 +2,24 @@ package dbrepo
 
 import (
 	"backend/internal/models"
+	"backend/internal/sqlc_db"
 	"context"
 	"database/sql"
 	"fmt"
 	"log"
 	"time"
+
+	"github.com/jackc/pgx/v4/pgxpool"
 )
 
 type PostgresDBRepo struct {
-	DB *sql.DB
+	DB *pgxpool.Pool
+	Q  *sqlc_db.Queries
 }
 
 const dbTimeout = time.Second * 3
 
-func (m *PostgresDBRepo) Connection() *sql.DB {
+func (m *PostgresDBRepo) Connection() *pgxpool.Pool {
 	return m.DB
 }
 
@@ -39,7 +43,7 @@ func (m *PostgresDBRepo) AllProjects(skill ...int) ([]*models.Project, error) {
 			title
 	`, where)
 
-	rows, err := m.DB.QueryContext(ctx, query)
+	rows, err := m.DB.Query(ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +88,7 @@ func (m *PostgresDBRepo) LoadProjectsWithSkills() ([]*models.Project, error) {
         ORDER BY p.id, s.id;
     `
 
-	rows, err := m.DB.QueryContext(ctx, query)
+	rows, err := m.DB.Query(ctx, query)
 	if err != nil {
 		return nil, fmt.Errorf("error executing query: %w", err)
 	}
@@ -135,7 +139,7 @@ func (m *PostgresDBRepo) OneProject(id int) (*models.Project, error) {
 		status, category, coalesce(image, ''),created_at, updated_at
 		from projects where id = $1`
 
-	row := m.DB.QueryRowContext(ctx, query, id)
+	row := m.DB.QueryRow(ctx, query, id)
 
 	var project models.Project
 
@@ -161,7 +165,7 @@ func (m *PostgresDBRepo) OneProject(id int) (*models.Project, error) {
 		where mg.project_id = $1
 		order by g.skill_name`
 
-	rows, err := m.DB.QueryContext(ctx, query, id)
+	rows, err := m.DB.Query(ctx, query, id)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
@@ -194,7 +198,7 @@ func (m *PostgresDBRepo) OneProjectForEdit(id int) (*models.Project, []*models.S
 		status, category, coalesce(image, ''),created_at, updated_at
 		from projects where id = $1`
 
-	row := m.DB.QueryRowContext(ctx, query, id)
+	row := m.DB.QueryRow(ctx, query, id)
 
 	var project models.Project
 
@@ -220,7 +224,7 @@ func (m *PostgresDBRepo) OneProjectForEdit(id int) (*models.Project, []*models.S
 		where mg.project_id = $1
 		order by g.skill_name`
 
-	rows, err := m.DB.QueryContext(ctx, query, id)
+	rows, err := m.DB.Query(ctx, query, id)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, nil, err
 	}
@@ -249,7 +253,7 @@ func (m *PostgresDBRepo) OneProjectForEdit(id int) (*models.Project, []*models.S
 	var allSkills []*models.Skill
 
 	query = "select id, skill_name from skills order by skill_name"
-	gRows, err := m.DB.QueryContext(ctx, query)
+	gRows, err := m.DB.Query(ctx, query)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -275,54 +279,83 @@ func (m *PostgresDBRepo) GetUserByEmail(email string) (*models.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
-	query := `select id, email, first_name, last_name, password,
-			created_at, updated_at from users where email = $1`
+	// query := `select id, email, first_name, last_name, password,
+	// 		created_at, updated_at from users where email = $1`
 
-	var user models.User
-	row := m.DB.QueryRowContext(ctx, query, email)
+	// var user models.User
+	// row := m.DB.QueryRowContext(ctx, query, email)
 
-	err := row.Scan(
-		&user.ID,
-		&user.Email,
-		&user.FirstName,
-		&user.LastName,
-		&user.Password,
-		&user.CreatedAt,
-		&user.UpdatedAt,
-	)
+	// err := row.Scan(
+	// 	&user.ID,
+	// 	&user.Email,
+	// 	&user.FirstName,
+	// 	&user.LastName,
+	// 	&user.Password,
+	// 	&user.CreatedAt,
+	// 	&user.UpdatedAt,
+	// )
 
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// return &user, nil
+	user, err := m.Q.GetUserByEmail(ctx, email)
 	if err != nil {
 		return nil, err
 	}
 
-	return &user, nil
+	return &models.User{
+		ID:        int(user.ID),
+		Email:     user.Email,
+		FirstName: user.FirstName.String,
+		LastName:  user.LastName.String,
+		Password:  user.Password,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+	}, nil
 }
 
 func (m *PostgresDBRepo) GetUserByID(id int) (*models.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
-	query := `select id, email, first_name, last_name, password,
-			created_at, updated_at from users where id = $1`
+	// query := `select id, email, first_name, last_name, password,
+	// 		created_at, updated_at from users where id = $1`
 
-	var user models.User
-	row := m.DB.QueryRowContext(ctx, query, id)
+	// var user models.User
+	// row := m.DB.QueryRowContext(ctx, query, id)
 
-	err := row.Scan(
-		&user.ID,
-		&user.Email,
-		&user.FirstName,
-		&user.LastName,
-		&user.Password,
-		&user.CreatedAt,
-		&user.UpdatedAt,
-	)
+	// err := row.Scan(
+	// 	&user.ID,
+	// 	&user.Email,
+	// 	&user.FirstName,
+	// 	&user.LastName,
+	// 	&user.Password,
+	// 	&user.CreatedAt,
+	// 	&user.UpdatedAt,
+	// )
 
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// return &user, nil
+
+	user, err := m.Q.GetUserByID(ctx, int32(id))
 	if err != nil {
 		return nil, err
 	}
 
-	return &user, nil
+	return &models.User{
+		ID:        int(user.ID),
+		Email:     user.Email,
+		FirstName: user.FirstName.String,
+		LastName:  user.LastName.String,
+		Password:  user.Password,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+	}, nil
 }
 
 func (m *PostgresDBRepo) AllSkills() ([]*models.Skill, error) {
@@ -331,7 +364,7 @@ func (m *PostgresDBRepo) AllSkills() ([]*models.Skill, error) {
 
 	query := `select id, skill_name, created_at, updated_at from skills order by skill_name`
 
-	rows, err := m.DB.QueryContext(ctx, query)
+	rows, err := m.DB.Query(ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -367,7 +400,7 @@ func (m *PostgresDBRepo) InsertProject(project models.Project) (int, error) {
 
 	var newID int
 
-	err := m.DB.QueryRowContext(ctx, stmt,
+	err := m.DB.QueryRow(ctx, stmt,
 		&project.Title,
 		&project.Description,
 		&project.TechnologyStack,
@@ -397,7 +430,7 @@ func (m *PostgresDBRepo) InsertSkill(skill models.Skill) (int, error) {
 	stmt := `INSERT INTO skills (skill_name, created_at, updated_at) VALUES ($1, $2, $3) RETURNING id`
 
 	var newID int
-	err := m.DB.QueryRowContext(ctx, stmt, skill.Name, time.Now(), time.Now()).Scan(&newID)
+	err := m.DB.QueryRow(ctx, stmt, skill.Name, time.Now(), time.Now()).Scan(&newID)
 	if err != nil {
 		return 0, err
 	}
@@ -413,7 +446,7 @@ func (m *PostgresDBRepo) UpdateProject(project models.Project) error {
 				status = $4, category = $5,
 				image = $6, updated_at = $7 where id = $8`
 
-	_, err := m.DB.ExecContext(ctx, stmt,
+	_, err := m.DB.Exec(ctx, stmt,
 		&project.Title,
 		&project.Description,
 		&project.TechnologyStack,
@@ -437,14 +470,14 @@ func (m *PostgresDBRepo) UpdateProjectSkills(id int, skillIDs []int) error {
 
 	stmt := `delete from projects_skills where project_id = $1`
 
-	_, err := m.DB.ExecContext(ctx, stmt, id)
+	_, err := m.DB.Exec(ctx, stmt, id)
 	if err != nil {
 		return err
 	}
 
 	for _, n := range skillIDs {
 		stmt := `insert into projects_skills (project_id, skill_id) values ($1, $2)`
-		_, err := m.DB.ExecContext(ctx, stmt, id, n)
+		_, err := m.DB.Exec(ctx, stmt, id, n)
 		if err != nil {
 			return err
 		}
@@ -459,7 +492,7 @@ func (m *PostgresDBRepo) DeleteProject(id int) error {
 
 	stmt := `delete from projects where id = $1`
 
-	_, err := m.DB.ExecContext(ctx, stmt, id)
+	_, err := m.DB.Exec(ctx, stmt, id)
 	if err != nil {
 		return err
 	}

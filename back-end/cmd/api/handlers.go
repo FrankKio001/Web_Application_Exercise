@@ -41,15 +41,29 @@ func (app *application) AllProjects(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) authenticate(w http.ResponseWriter, r *http.Request) {
+	ip := r.RemoteAddr
+
+	blocked, err := app.LoginLimiter.IsBlocked(ip)
+	if err != nil {
+		app.errorJSON(w, err, http.StatusInternalServerError)
+		return
+	}
+	//429
+	if blocked {
+		app.errorJSON(w, errors.New("too many login attempts"), http.StatusTooManyRequests)
+		return
+	}
+
 	// read json payload
 	var requestPayload struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
 
-	err := app.readJSON(w, r, &requestPayload)
+	err = app.readJSON(w, r, &requestPayload)
 	if err != nil {
 		app.errorJSON(w, err, http.StatusBadRequest)
+		app.LoginLimiter.IncrementAttempts(ip)
 		return
 	}
 
@@ -57,6 +71,7 @@ func (app *application) authenticate(w http.ResponseWriter, r *http.Request) {
 	user, err := app.DB.GetUserByEmail(requestPayload.Email)
 	if err != nil {
 		app.errorJSON(w, errors.New("invalid credentials"), http.StatusBadRequest)
+		app.LoginLimiter.IncrementAttempts(ip)
 		return
 	}
 
@@ -64,8 +79,12 @@ func (app *application) authenticate(w http.ResponseWriter, r *http.Request) {
 	valid, err := user.PasswordMatches(requestPayload.Password)
 	if err != nil || !valid {
 		app.errorJSON(w, errors.New("invalid credentials"), http.StatusBadRequest)
+		app.LoginLimiter.IncrementAttempts(ip)
 		return
 	}
+
+	//success to login
+	app.LoginLimiter.ResetAttempts(ip)
 
 	// create a jwt user
 	u := jwtUser{

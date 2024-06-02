@@ -87,3 +87,35 @@
   from, to { border-color: transparent; }
   50% { border-color: orange; }
 }
+
+/*寬度小於等於390px*/
+@media (max-width: 390px) {
+  .container-fluid {
+    padding: 10px;
+  }
+
+  .App-header {
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .header-left, .header-center, .header-right {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .header-center img {
+    height: 80px;
+  }
+
+  .header-left img, .header-right img {
+    height: 50px;
+  }
+
+  .list-group-item {
+    font-size: 14px;
+    padding: 10px;
+  }
+}
