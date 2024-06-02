@@ -12,7 +12,6 @@ function App() {
   const [alertClassName, setAlertClassName] = useState("d-none");
 
   const [tickInterval, setTickInterval] = useState();
-
   const navigate = useNavigate();
 
   const logOut = () => {
@@ -112,7 +111,6 @@ function App() {
           </a>
         </div>
       </header>
-      
 
       <div className="row">
         {jwtToken !== "" && (
