@@ -10,6 +10,7 @@ import (
 	"github.com/ulule/limiter/v3/drivers/store/memory"
 )
 
+// 跨網站偽造請求攻擊（CSRF）
 func (app *application) enableCORS(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		origin := r.Header.Get("Origin")
@@ -57,8 +58,11 @@ func rateLimiterMiddleware(next http.Handler) http.Handler {
 		Limit:  10,
 	}
 
+	// Create a new in-memory store to hold the rate limiting counters
 	store := memory.NewStore()
+	// Initialize the rate limiter with the store and the predefined rate
 	instance := limiter.New(store, rate)
+	// Wrap the rate limiter with standard library compatible middleware
 	middleware := stdlib.NewMiddleware(instance)
 
 	return middleware.Handler(next)
@@ -77,6 +81,7 @@ func circuitBreakerMiddleware(next http.Handler) http.Handler {
 			return counts.ConsecutiveFailures > 3
 		},
 	}
+	// Initialize
 	circuitBreaker := gobreaker.NewCircuitBreaker[interface{}](cbSettings)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
