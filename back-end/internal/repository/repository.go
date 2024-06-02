@@ -2,11 +2,13 @@ package repository
 
 import (
 	"backend/internal/models"
-	"database/sql"
+
+	"github.com/jackc/pgx/v4/pgxpool"
 )
 
 type DatabaseRepo interface {
-	Connection() *sql.DB
+	//Connection() *sql.DB
+	Connection() *pgxpool.Pool
 	AllProjects(skill ...int) ([]*models.Project, error)
 	GetUserByEmail(email string) (*models.User, error)
 	GetUserByID(id int) (*models.User, error)

@@ -3,6 +3,7 @@ package main
 import (
 	"backend/internal/repository"
 	"backend/internal/repository/dbrepo"
+	"backend/internal/sqlc_db"
 	"fmt"
 	"log"
 	"net/http"
@@ -42,15 +43,15 @@ func main() {
 
 	app := application{
 		// 從環境變數中讀取資料庫配置訊息
-		JWTSecret:    os.Getenv("JWT_SECRET"),
-		JWTIssuer:    os.Getenv("JWT_ISSUER"),
-		JWTAudience:  os.Getenv("JWT_AUDIENCE"),
-		CookieDomain: "localhost", // 根據需要
-		//CookieDomain: os.Getenv("COOKIE_DOMAIN"),
+		JWTSecret:   os.Getenv("JWT_SECRET"),
+		JWTIssuer:   os.Getenv("JWT_ISSUER"),
+		JWTAudience: os.Getenv("JWT_AUDIENCE"),
+		//CookieDomain: "localhost", // 根據需要
+		CookieDomain: os.Getenv("COOKIE_DOMAIN"),
 		DSN: fmt.Sprintf(
 			//sslmode 用rds時改成require 本地disable
-			"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-			//"host=%s port=%s user=%s password=%s dbname=%s sslmode=require",
+			//"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+			"host=%s port=%s user=%s password=%s dbname=%s sslmode=require",
 			os.Getenv("DB_HOST"),
 			os.Getenv("DB_PORT"),
 			os.Getenv("DB_USER"),
@@ -77,8 +78,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	app.DB = &dbrepo.PostgresDBRepo{DB: conn}
-	defer app.DB.Connection().Close()
+
+	queries := sqlc_db.New(conn)
+
+	app.DB = &dbrepo.PostgresDBRepo{
+		DB: conn,
+		Q:  queries,
+	}
+	//defer app.DB.Connection().Close()
 
 	app.auth = Auth{
 		Issuer:        app.JWTIssuer,
