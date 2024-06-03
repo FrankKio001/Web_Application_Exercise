@@ -6,6 +6,45 @@ import (
 	"testing"
 )
 
+func TestSecurityHeadersMiddleware(t *testing.T) {
+	//handler
+	nextHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("test"))
+	})
+
+	//init middleware
+	middleware := securityHeadersMiddleware(nextHandler)
+
+	// http request
+	req, err := http.NewRequest("GET", "/", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	//ResponseRecorder to get the respon
+	rr := httptest.NewRecorder()
+
+	middleware.ServeHTTP(rr, req)
+
+	// security header check
+	tests := []struct {
+		header string
+		value  string
+	}{
+		{"Content-Security-Policy", "default-src 'self'"},
+		{"X-Frame-Options", "DENY"},
+		{"X-Content-Type-Options", "nosniff"},
+		{"Referrer-Policy", "no-referrer-when-downgrade"},
+		{"Permissions-Policy", "geolocation=(self), microphone=()"},
+	}
+
+	for _, test := range tests {
+		if val := rr.Header().Get(test.header); val != test.value {
+			t.Errorf("Header %s got %s, want %s", test.header, val, test.value)
+		}
+	}
+}
+
 func TestRateLimiterMiddleware(t *testing.T) {
 	// Create a simple handler that returns 200 OK
 	nextHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
