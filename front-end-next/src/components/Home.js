@@ -20,11 +20,12 @@ const Home = () => {
         <div className="line-container">
           <h6 className="line">hire me</h6>
         </div>
-        <div style={{ position: 'relative', display: 'inline-block' }}>
+        <div className="animation-container" >
           <Image 
             src={bg} 
             alt="project birds"
-            style={{ maxWidth: '100%', maxHeight: '50%' }}
+            /*style={{ maxWidth: '100%', maxHeight: '50%' }}*/
+            className='bgsize'
           />
           <div className="animation" style={{ position: 'absolute', top: '60%', left: '30%', transform: 'translate(-50%, -50%)' }}>
             <h2 style={{ display: 'inline' }}>{`I'M A `}{titles[titleIndex]}</h2>

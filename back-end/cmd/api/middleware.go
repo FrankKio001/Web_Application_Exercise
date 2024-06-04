@@ -53,14 +53,14 @@ func (app *application) authRequired(next http.Handler) http.Handler {
 func securityHeadersMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		//限制資源
-		// w.Header().Set("Content-Security-Policy", "default-src 'self'")
-		// //防止劫持(內容在別的網站中展示)
-		// w.Header().Set("X-Frame-Options", "DENY")
-		// w.Header().Set("X-Content-Type-Options", "nosniff")
-		// //控制資訊傳送
-		// w.Header().Set("Referrer-Policy", "no-referrer-when-downgrade")
-		// //禁止使用Web功能
-		// w.Header().Set("Permissions-Policy", "geolocation=(self), microphone=()")
+		w.Header().Set("Content-Security-Policy", "default-src 'self'")
+		//防止劫持(內容在別的網站中展示)
+		w.Header().Set("X-Frame-Options", "DENY")
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+		//控制資訊傳送
+		w.Header().Set("Referrer-Policy", "no-referrer-when-downgrade")
+		//禁止使用Web功能
+		w.Header().Set("Permissions-Policy", "geolocation=(self), microphone=()")
 		next.ServeHTTP(w, r)
 	})
 }

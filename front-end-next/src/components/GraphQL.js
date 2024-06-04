@@ -109,23 +109,25 @@ const GraphQL = () => {
             </div>
             {/* 技能選擇下拉清單 */}
             <div className="d-flex justify-content-center">
-                <select className="form-select skill-select" value={selectedSkill} onChange={handleSkillChange}>
-                    <option value="">ALL</option>
-                    {skillList.map(skill => (
-                        <option key={skill.id} value={skill.skill_name}>{skill.skill_name}</option>
-                    ))}
-                </select>
+                <div className="d-flex-inner">
+                    <select className="form-select skill-select" value={selectedSkill} onChange={handleSkillChange}>
+                        <option value="">ALL</option>
+                        {skillList.map(skill => (
+                            <option key={skill.id} value={skill.skill_name}>{skill.skill_name}</option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
             {/* 項目清單 */}
             {projects ? (
-                <div className="mt-4">
+                <div className="grid">
                     {projects.map((project) => (
-                        <div key={project.id} className="card mb-3">
+                        <div key={project.id} className="card">
                             <Link href={`/projects/${project.id}`}>
                                 <div className="card-body">
                                 <h5 className="card-title">{project.title}</h5>
-                                <h6 className="card-subtitle mb-2 text-muted">{project.technology_stack}</h6>
+                                <h6 className="card-subtitle text-muted">{project.technology_stack}</h6>
                                 <p className="card-text">{project.description}</p>
                                 <p className="card-text">
                                     Category: {project.category}, Status: {project.status}

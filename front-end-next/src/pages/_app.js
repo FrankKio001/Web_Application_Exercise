@@ -8,6 +8,8 @@ import github from '../../public/github.png';
 import login from '../../public/login.png';
 import Link from 'next/link';
 import Image from 'next/image';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 export const MyAppContext = createContext();
 
@@ -102,32 +104,36 @@ function App({ Component, pageProps }) {
     <>
       <Head>
         <link rel="icon" href="/favicon.ico" />
-        <title>My Next.js App</title>
+        <title>Mr.Kio</title>
       </Head>
+
       <div className="container-fluid">
         <header className="App-header">
-          <div className="header-left">
-            {jwtToken === "" ? (
-              <Link href="/login">
-                <Image src={login} alt="Login" style={{ height: "50px" }} />
+          <div className="header-container">
+            <div className="header-left">
+              {jwtToken === "" ? (
+                <Link href="/login">
+                  <Image src={login} alt="Login" width={50} height={50}/>
+                </Link>
+              ) : (
+                <a onClick={logOut}>
+                  <Image src={login} alt="Logout"  width={50} height={50}/>
+                </a>
+              )}
+            </div>
+            <div className="header-center">
+              <Link href="/">
+                <Image src={logo} alt="Logo" width={100} height={60}/>
               </Link>
-            ) : (
-              <a href="#!" onClick={logOut} className="header-left">
-                <Image src={login} alt="Logout" style={{ height: "60px" }} />
+            </div>
+            <div className="header-right">
+              <a href="https://github.com/FrankKio001">
+                <Image src={github} alt="GitHub" width={50} height={50}/>
               </a>
-            )}
-          </div>
-          <div className="header-center">
-            <Link href="/" className="header-center">
-              <Image src={logo} alt="Logo" style={{ height: "100px" }} />
-            </Link>
-          </div>
-          <div className="header-right">
-            <a href="https://github.com/FrankKio001">
-              <Image src={github} alt="GitHub" style={{ height: "60px" }} />
-            </a>
+            </div>
           </div>
         </header>
+
 
         <div className="row">
           {jwtToken !== "" && (
