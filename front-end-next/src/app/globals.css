@@ -1,0 +1,94 @@
+/* Basic Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+/* Card Styles */
+.card {
+  background: #ffffff; /* White background for cards */
+  border: 1px solid #ddd; /* Subtle border */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Soft shadow */
+  margin-bottom: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.card-title {
+  font-size: 20px;
+  color: #333;
+}
+
+.card-subtitle {
+  font-size: 16px;
+  color: #666;
+}
+
+.card-text {
+  font-size: 14px;
+  color: #555;
+  margin-top: 10px;
+}
+
+.line-container {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.line {
+  display: inline-block;
+  position: relative;
+  padding: 0 20px;
+}
+
+.line::before, .line::after {
+  content: '';
+  position: absolute;
+  height: 1px;
+  width: 50px; /* Fixed width for lines */
+  top: 50%;
+  background-color: #ccc;
+}
+
+.line::before {
+  left: -60px;
+}
+
+.line::after {
+  right: -60px;
+}
+
+/* Adjust select input styling */
+.skill-select {
+  padding: 8px 10px;
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+  background-color: #fff;
+  margin: 10px 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 15px;
+  }
+
+  .line::before, .line::after {
+    width: 30px; /* Shorter lines on smaller screens */
+  }
+}
