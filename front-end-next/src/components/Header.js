@@ -1,34 +1,27 @@
-// components/Header.js
-import React from 'react';
+import React, { useContext } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import logo from '../../public/logo.png';
-import github from '../../public/github.png';
-import login from '../../public/login.png';
+import { MyAppContext } from '../pages/_app';
 
-const Header = ({ jwtToken, setJwtToken, onLogout }) => {
+const Header = () => {
+    const { jwtToken, logOut } = useContext(MyAppContext);
+
     return (
         <header className="App-header">
             <div className="header-container">
                 <div className="header-left">
                     {jwtToken === "" ? (
-                        <Link href="/login">
-                            <a><Image src={login} alt="Login" height="50px" width="50px" /></a>
-                        </Link>
+                        <Link href="/login"><a><Image src="/login.png" alt="Login" width={50} height={50} /></a></Link>
                     ) : (
-                        <a onClick={onLogout}>
-                            <Image src={login} alt="Logout" height="50px" width="50px" />
-                        </a>
+                        <a onClick={logOut}><Image src="/login.png" alt="Logout" width={50} height={50} /></a>
                     )}
                 </div>
                 <div className="header-center">
-                    <Link href="/">
-                        <a><Image src={logo} alt="Logo" height="50px" width="50px" /></a>
-                    </Link>
+                    <Link href="/"><a><Image src="/logo.png" alt="Logo" width={100} height={60} /></a></Link>
                 </div>
                 <div className="header-right">
                     <a href="https://github.com/FrankKio001" target="_blank" rel="noopener noreferrer">
-                        <Image src={github} alt="GitHub" height="50px" width="50px" />
+                        <Image src="/github.png" alt="GitHub" width={50} height={50} />
                     </a>
                 </div>
             </div>

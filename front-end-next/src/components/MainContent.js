@@ -1,28 +1,31 @@
 // components/MainContent.js
-import React from 'react';
-import Alert from './Alert';
+import React, { useContext } from 'react';
 import Link from 'next/link';
+import Alert from './Alert';
+import { MyAppContext } from '../pages/_app';
 
-const MainContent = ({ jwtToken, alertMessage, alertClassName, children }) => {
+const MainContent = ({ Component, pageProps }) => {
+    const { jwtToken, alertMessage, alertClassName } = useContext(MyAppContext);
+
     return (
         <div className="row">
             {jwtToken !== "" && (
                 <div className="col-md-2">
                     <nav>
                         <div className="list-group">
-                            <Link href="/"><a className="list-group-item list-group-item-action">Home</a></Link>
-                            <Link href="/projects"><a className="list-group-item list-group-item-action">Projects</a></Link>
-                            <Link href="/skills"><a className="list-group-item list-group-item-action">Skills</a></Link>
-                            <Link href="/admin/project/0"><a className="list-group-item list-group-item-action">Add Project</a></Link>
-                            <Link href="/manage-catalogue"><a className="list-group-item list-group-item-action">Manage Catalogue</a></Link>
-                            <Link href="/graphql"><a className="list-group-item list-group-item-action">GraphQL</a></Link>
+                            <Link href="/" className="list-group-item list-group-item-action">Home</Link>
+                            <Link href="/projects" className="list-group-item list-group-item-action">Projects</Link>
+                            <Link href="/skills" className="list-group-item list-group-item-action">Skills</Link>
+                            <Link href="/admin/project/0" className="list-group-item list-group-item-action">Add Project</Link>
+                            <Link href="/manage-catalogue" className="list-group-item list-group-item-action">Manage Catalogue</Link>
+                            <Link href="/graphql" className="list-group-item list-group-item-action">GraphQL</Link>
                         </div>
                     </nav>
                 </div>
             )}
             <div className={jwtToken === "" ? "col-md-12" : "col-md-10"}>
                 <Alert message={alertMessage} className={alertClassName} />
-                {children}
+                <Component {...pageProps} />
             </div>
         </div>
     );
