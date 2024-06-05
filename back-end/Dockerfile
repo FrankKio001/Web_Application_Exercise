@@ -1,5 +1,5 @@
 # 官方Go環境
-FROM golang:1.20 as builder
+FROM golang:1.22 as builder
 WORKDIR /app
 
 COPY go.mod go.sum ./

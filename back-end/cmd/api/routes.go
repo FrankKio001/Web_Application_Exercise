@@ -13,6 +13,11 @@ func (app *application) routes() http.Handler {
 
 	mux.Use(middleware.Recoverer)
 	mux.Use(app.enableCORS)
+	mux.Use(securityHeadersMiddleware)
+
+	// rate limiting and circuit breaker middleware
+	mux.Use(rateLimiterMiddleware)
+	mux.Use(circuitBreakerMiddleware)
 
 	mux.Get("/", app.Home)
 

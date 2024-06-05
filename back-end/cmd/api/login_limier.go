@@ -13,6 +13,7 @@ type LoginLimiter struct {
 	blockDuration time.Duration
 }
 
+// NewLoginLimiter initializes and returns a new LoginLimiter.
 func NewLoginLimiter(client *redis.Client, maxAttempts int, blockDuration time.Duration) *LoginLimiter {
 	return &LoginLimiter{
 		client:        client,
@@ -21,6 +22,7 @@ func NewLoginLimiter(client *redis.Client, maxAttempts int, blockDuration time.D
 	}
 }
 
+// IncrementAttempts increments the login attempts for the given IP address.
 func (ll *LoginLimiter) IncrementAttempts(ip string) error {
 	ctx := context.Background()
 	_, err := ll.client.Incr(ctx, ip).Result()
@@ -31,12 +33,14 @@ func (ll *LoginLimiter) IncrementAttempts(ip string) error {
 	return err
 }
 
+// ResetAttempts resets the login attempts for the given IP address.
 func (ll *LoginLimiter) ResetAttempts(ip string) error {
 	ctx := context.Background()
 	_, err := ll.client.Del(ctx, ip).Result()
 	return err
 }
 
+// IsBlocked checks if the given IP address is blocked based on the number of attempts.
 func (ll *LoginLimiter) IsBlocked(ip string) (bool, error) {
 	ctx := context.Background()
 	attempts, err := ll.client.Get(ctx, ip).Int()

@@ -26,7 +26,14 @@ back-end/
 				postgres_dbrepo_test.go
 			mock/
 				mock_repository.go
-
+		sqlc_db/
+			db.go
+			model.go
+			query.go
+	sqlc/
+		query.sql
+		schema.sql
+	sqlc.yaml
 	Dockerfile
 
 			
