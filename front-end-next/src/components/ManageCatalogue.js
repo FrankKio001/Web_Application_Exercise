@@ -8,11 +8,12 @@ const ManageCatalogue = () => {
     const { jwtToken } = useContext(MyAppContext);
     const router = useRouter();
 
-    useEffect( () => {
-        if (jwtToken === "") {
+    useEffect(() => {
+        if (jwtToken== "") {
             router.push("/login");
-            return
+            return;
         }
+
         const headers = new Headers();
         headers.append("Content-Type", "application/json");
         headers.append("Authorization", "Bearer " + jwtToken);
@@ -20,7 +21,7 @@ const ManageCatalogue = () => {
         const requestOptions = {
             method: "GET",
             headers: headers,
-        }
+        };
 
         fetch(`${process.env.NEXT_PUBLIC_BACKEND}/admin/projects`, requestOptions)
             .then((response) => response.json())
@@ -29,11 +30,11 @@ const ManageCatalogue = () => {
             })
             .catch(err => {
                 console.log(err);
-            })
+            });
 
     }, [jwtToken, router]);
 
-    return(
+    return (
         <div>
             <h2>Manage Catalogue</h2>
             <hr />
@@ -49,18 +50,18 @@ const ManageCatalogue = () => {
                     {projects.map((m) => (
                         <tr key={m.id}>
                             <td>
-                                <Link href={`/admin/project/${m.id}`}>
-                                    {m.title}
+                                <Link href={`/admin/project/${m.id}`} passHref>
+                                    <a>{m.title}</a>
                                 </Link>
                             </td>
                             <td>{m.status}</td>
                             <td>{m.updated_at}</td>
-                        </tr>    
+                        </tr>
                     ))}
                 </tbody>
             </table>
         </div>
-    )
-}
+    );
+};
 
 export default ManageCatalogue;
