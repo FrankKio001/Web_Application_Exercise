@@ -53,16 +53,16 @@ services:
       #CORS_ALLOW_ORIGIN: http://13.210.118.229 #前端
       COOKIE_DOMAIN: yourdomain.com
 
-  frontend:
-    image: hohokio12/mr.kio:frontend-latest
-    build: 
-      context: ./front-end
-      dockerfile: Dockerfile
-    ports:
-      #- "3000:80"
-      - "80:80"
-    depends_on:
-      - backend
+  # frontend:
+  #   image: hohokio12/mr.kio:frontend-latest
+  #   build: 
+  #     context: ./front-end-next
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     #- "3000:3000"
+  #     - "80:80"
+  #   depends_on:
+  #     - backend
       
 volumes:
   postgres-data: 
