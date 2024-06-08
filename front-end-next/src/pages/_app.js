@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from '../components/Header';
 import MainContent from '../components/MainContent'; 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+//import { Hydrate, DehydratedState } from '@tanstack/react-query';
 
 // 全局 Context
 export const MyAppContext = createContext();
@@ -114,7 +115,9 @@ function App({ Component, pageProps }) {
 
           <div className="container-fluid">
             <Header />
-            <MainContent Component={Component} pageProps={pageProps} />
+            {/* <Hydrate state={pageProps.dehydratedState}> */}
+              <MainContent Component={Component} pageProps={pageProps} />
+            {/* </Hydrate> */}
           </div>
         </>
       </MyAppContext.Provider>

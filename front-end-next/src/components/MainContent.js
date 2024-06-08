@@ -67,7 +67,7 @@ import Alert from './Alert';
 import { useQuery } from '@tanstack/react-query';
 import { MyAppContext } from '../pages/_app';
 
-const MainContent = ({ Component, pageProps }) => {
+const MainContent = ({ Component, pageProps, initialData }) => {
   const { jwtToken, alertMessage, alertClassName } = useContext(MyAppContext);
 
   const { data, error, isLoading } = useQuery(['fetchData'], async () => {
@@ -79,6 +79,7 @@ const MainContent = ({ Component, pageProps }) => {
     if (!response.ok) throw new Error('Failed to fetch data');
     return response.json();
   }, {
+    initialData,
     enabled: !!jwtToken
   });
 
@@ -111,5 +112,4 @@ const MainContent = ({ Component, pageProps }) => {
 };
 
 export default MainContent;
-
 */

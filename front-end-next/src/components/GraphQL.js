@@ -1,10 +1,10 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from 'next/link';
 
-const GraphQL = () => {
+const GraphQL = ({ initialProjects, initialSkillList }) => {
     // 設置狀態變數
-    const [projects, setProjects] = useState([]);
-    const [skillList, setSkillList] = useState([]);
+    const [projects, setProjects] = useState(initialProjects);
+    const [skillList] = useState(initialSkillList);
     const [selectedSkill, setSelectedSkill] = useState("");
 
     // 定義 fetchGraphQL 函數以執行 GraphQL 查詢
@@ -38,7 +38,8 @@ const GraphQL = () => {
         }`;
 
         fetchGraphQL(query).then(data => {
-            setProjects(data.list || []);
+            //console.log("All Projects Data:", data);
+            setProjects(data?.list || []);
         });
     }, [fetchGraphQL]);
 
@@ -62,31 +63,34 @@ const GraphQL = () => {
         }`;
 
         fetchGraphQL(query).then(data => {
-            /*debug
-            const projectsFound = data.search || [];
+            
+            const projectsFound = data?.search || [];
+            /*
             console.log(`找到的項目數量: ${selectedSkill}`);
             console.log(`找到的項目數量: ${projectsFound.length}`);
-            setProjects(projectsFound);
             */
-            setProjects(data.search || []);
+            setProjects(projectsFound);
+            
+            //console.log("Search Projects Data:", data);
+            //setProjects(data?.search || []);
         });
     }, [fetchGraphQL]);
 
-    // 取得全部技能列表
-    useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND}/skills`)
-            .then(response => response.json())
-            .then(data => {
-                //console.log("技能數據: ", data);//debug
-                setSkillList(data);
-            })
-            .catch(error => console.error("獲取技能失敗", error));
-    }, []);
+    // // 取得全部技能列表
+    // useEffect(() => {
+    //     fetch(`${process.env.NEXT_PUBLIC_BACKEND}/skills`)
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             //console.log("技能數據: ", data);//debug
+    //             setSkillList(data);
+    //         })
+    //         .catch(error => console.error("獲取技能失敗", error));
+    // }, []);
 
-    // 初始加載所有項目
-    useEffect(() => {
-        loadAllProjects();
-    }, [loadAllProjects]);
+    // // 初始加載所有項目
+    // useEffect(() => {
+    //     loadAllProjects();
+    // }, [loadAllProjects]);
 
     // 處理技能改變事件
     const handleSkillChange = (event) => {
@@ -102,7 +106,8 @@ const GraphQL = () => {
             performSearch(value);
         }
     };
-
+    //console.log("Skill List:", skillList);
+    //console.log("Projects:", projects);
     return (
         <div>
             <div className="line-container">
@@ -135,7 +140,7 @@ const GraphQL = () => {
                                             Category: {project.category}, Status: {project.status}
                                         </p>
                                         <div className="skills">
-                                            {project.skills?.map(skill => (
+                                            {project.skills && project.skills.map(skill => (
                                                 <span key={skill.id} className="skill-tag">{skill.skill_name}</span>
                                             ))}
                                         </div>

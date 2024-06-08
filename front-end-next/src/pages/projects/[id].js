@@ -4,7 +4,7 @@ const ProjectPage = ({ project, error }) => {
     return <Project project={project} error={error} />;
 };
 
-//debug server
+//debug
 export async function getServerSideProps({ params }) {
     // 重試_因為有限429
     const fetchWithRetry = async (url, options, retries = 3) => {

@@ -1,19 +1,29 @@
-import { useCallback, useEffect, useState, useContext } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 import Input from "./form/Input";
 import Select from "./form/Select";
 import TextArea from "./form/TextArea";
 import Checkbox from "./form/Checkbox";
 import Swal from "sweetalert2";
-import { MyAppContext } from '../pages/_app';
 
-const EditProject = () => {
+const EditProject = ({ projectId, jwtToken }) => {
     const router = useRouter();
-    const { id } = router.query;
-
-    const { jwtToken } = useContext(MyAppContext);
+    //const { id } = router.query;
+    //const { jwtToken } = useContext(MyAppContext);
     const [error, setError] = useState(null);
     const [errors, setErrors] = useState([]);
+    //先隨便用Array(10)
+    const [project, setProject] = useState({
+        id: 0,
+        title: "",
+        description: "",
+        technology_stack: "",
+        status: "",
+        category: "",
+        image: "",
+        skills: [],
+        skills_array: [],
+    });
 
     const StatusOptions = [
         {id: "ongoing", value: "Ongoing"},
@@ -31,18 +41,6 @@ const EditProject = () => {
     const hasError = (key) => {
         return errors.indexOf(key) !== -1;
     }
-    //先隨便用Array(10)
-    const [project, setProject] = useState({
-        id: 0,
-        title: "",
-        description: "",
-        technology_stack: "",
-        status: "",
-        category: "",
-        image: "",
-        skills: [],
-        skills_array: [],
-    });
 
     useEffect(() => {
         if (jwtToken === "") {
@@ -50,67 +48,67 @@ const EditProject = () => {
             return;
         }
 
-        const projectId = Number(id);
+        //const projectId = Number(id);
+        const fetchData = async () => {
+            if (projectId === "0") {
+                // adding a project
+                setProject({
+                    id: 0,
+                    title: "",
+                    description: "",
+                    technology_stack: "",
+                    status: "",
+                    category: "",
+                    image: "",
+                    skills: [],
+                    skills_array: [],
+                });
 
-        if (!projectId) {
-            // adding a project
-            setProject({
-                id: 0,
-                title: "",
-                description: "",
-                technology_stack: "",
-                status: "",
-                category: "",
-                image: "",
-                skills: [],
-                skills_array: [],
-            });
+                //fetch
+                const headers = new Headers();
+                headers.append("Content-Type", "application/json");
 
-            //fetch
-            const headers = new Headers();
-            headers.append("Content-Type", "application/json");
+                const requestOptions = {
+                    method: "GET",
+                    headers: headers,
+                }
 
-            const requestOptions = {
-                method: "GET",
-                headers: headers,
-            }
+                fetch(`${process.env.NEXT_PUBLIC_BACKEND}/skills`, requestOptions)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        const checks = [];
 
-            fetch(`${process.env.NEXT_PUBLIC_BACKEND}/skills`, requestOptions)
-                .then((response) => response.json())
-                .then((data) => {
-                    const checks = [];
+                        data.forEach(g => {
+                            checks.push({id: g.id, checked: false, skill_name: g.skill_name});
+                        });
 
-                    data.forEach(g => {
-                        checks.push({id: g.id, checked: false, skill_name: g.skill_name});
+                        setProject(p => ({
+                            ...p,
+                            skills: checks,
+                            skills_array: [],
+                        }));
                     })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            } else {
+                // editing an existing project
+                const headers = new Headers();
+                headers.append("Content-Type", "application/json");
+                headers.append("Authorization", "Bearer " + jwtToken);
 
-                    setProject(p => ({
-                        ...p,
-                        skills: checks,
-                        skills_array: [],
-                    }))
-                })
-                .catch(err => {
-                    console.log(err);
-                })
-        } else {
-            // editing an existing project
-            const headers = new Headers();
-            headers.append("Content-Type", "application/json");
-            headers.append("Authorization", "Bearer " + jwtToken);
+                const requestOptions = {
+                    method: "GET",
+                    headers: headers,
+                };
 
-            const requestOptions = {
-                method: "GET",
-                headers: headers,
-            }
-
-            fetch(`${process.env.NEXT_PUBLIC_BACKEND}/admin/projects/${id}`, requestOptions)
-                .then((response) => {
-                    if (response.status !== 200) {
-                        setError("Invalid response code: " + response.status)
-                    }
-                    return response.json();
-                })
+                fetch(`${process.env.NEXT_PUBLIC_BACKEND}/admin/projects/${projectId}`, requestOptions)
+                    .then((response) => {
+                        if (response.status !== 200) {
+                            setError("Invalid response code: " + response.status)
+                        }
+                        return response.json();
+                    })
                 .then((data) => {
                     const checks = [];
 
@@ -120,20 +118,21 @@ const EditProject = () => {
                         } else {
                             checks.push({id: g.id, checked: false, skill_name: g.skill_name});
                         }
-                    })
+                    });
 
                     // set state
                     setProject({
                         ...data.project,
                         skills: checks,
-                    })
+                    });
                 })
                 .catch(err => {
                     console.log(err);
-                })
-        }
-
-    }, [id, jwtToken, router.isReady])
+                });
+            }
+        };
+        fetchData();
+    }, [projectId, jwtToken, router]);
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -205,7 +204,7 @@ const EditProject = () => {
             })
             .catch(err => {
                 console.log(err);
-            })
+            });
     }
 
     const handleChange = () => (event) => {
