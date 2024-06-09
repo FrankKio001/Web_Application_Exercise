@@ -1,14 +1,3 @@
-/*
-// src/pages/manage-catalogue.js
-
-import ManageCatalogue from '../components/ManageCatalogue';
-
-export default function ManageCataloguePage() {
-  return <ManageCatalogue />;
-}
-*/
-
-// pages/manage-catalogue.js
 import { parseCookies } from 'nookies';
 import ManageCatalogueComponent from '../components/ManageCatalogue';
 
@@ -63,4 +52,3 @@ const ManageCataloguePage = ({ projects, error }) => {
 };
 
 export default ManageCataloguePage;
-

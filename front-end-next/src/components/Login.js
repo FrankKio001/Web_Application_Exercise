@@ -1,8 +1,8 @@
-// src/components/Login.js
 import { useState, useContext } from 'react';
 import { useRouter } from 'next/router';
 import Input from './form/Input';
 import { MyAppContext } from '../pages/_app';
+import { setCookie } from 'nookies'; 
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -15,7 +15,6 @@ const Login = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
         
-        // build the request payload
         let payload = {
             email: email,
             password: password,
@@ -49,6 +48,10 @@ const Login = () => {
                     setAlertMessage(data.message);
                 } else {
                     setJwtToken(data.access_token);
+                    setCookie(null, 'jwt', data.access_token, { // 使用 nookies 設置 cookie
+                        maxAge: 30 * 24 * 60 * 60,
+                        path: '/',
+                    });
                     setAlertClassName("d-none");
                     setAlertMessage("");
                     toggleRefresh(true);
@@ -57,11 +60,11 @@ const Login = () => {
             })
             .catch(error => {
                 setAlertClassName("alert-danger");
-                setAlertMessage(error);
+                setAlertMessage(error.message);
             })
     }
 
-    return(
+    return (
         <div className="col-md-6 offset-md-3">
             <h2>Login</h2>
             <hr />
@@ -92,8 +95,6 @@ const Login = () => {
                     className="btn btn-primary"
                     value="Login"
                 />
-
-
             </form>
         </div>
     )

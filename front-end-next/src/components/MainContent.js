@@ -1,4 +1,4 @@
-
+/*
 import React, { useContext, useState, useEffect } from 'react';
 import Link from 'next/link';
 import Alert from './Alert';
@@ -59,8 +59,8 @@ const MainContent = ({ Component, pageProps }) => {
 };
 
 export default MainContent;
+*/
 
-/*
 import React, { useContext } from 'react';
 import Link from 'next/link';
 import Alert from './Alert';
@@ -92,12 +92,12 @@ const MainContent = ({ Component, pageProps, initialData }) => {
         <div className="col-md-2">
           <nav>
             <div className="list-group">
-              <Link href="/"><a className="list-group-item list-group-item-action">Home</a></Link>
-              <Link href="/projects"><a className="list-group-item list-group-item-action">Projects</a></Link>
-              <Link href="/skills"><a className="list-group-item list-group-item-action">Skills</a></Link>
-              <Link href="/admin/project/0"><a className="list-group-item list-group-item-action">Add Project</a></Link>
-              <Link href="/manage-catalogue"><a className="list-group-item list-group-item-action">Manage Catalogue</a></Link>
-              <Link href="/graphql"><a className="list-group-item list-group-item-action">GraphQL</a></Link>
+              <Link href="/" legacyBehavior><a className="list-group-item list-group-item-action">Home</a></Link>
+              <Link href="/projects" legacyBehavior><a className="list-group-item list-group-item-action">Projects</a></Link>
+              <Link href="/skills" legacyBehavior><a className="list-group-item list-group-item-action">Skills</a></Link>
+              <Link href="/admin/project/0" legacyBehavior><a className="list-group-item list-group-item-action">Add Project</a></Link>
+              <Link href="/manage-catalogue" legacyBehavior><a className="list-group-item list-group-item-action">Manage Catalogue</a></Link>
+              <Link href="/graphql" legacyBehavior><a className="list-group-item list-group-item-action">GraphQL</a></Link>
             </div>
           </nav>
         </div>
@@ -112,4 +112,3 @@ const MainContent = ({ Component, pageProps, initialData }) => {
 };
 
 export default MainContent;
-*/

@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import EditProject from '../../../components/EditProject';
 //import { QueryClient, dehydrate } from '@tanstack/react-query';
 
-export default function EditProjectPage() {
+export default function EditProject() {
   const router = useRouter();
   const { id } = router.query;
 
@@ -35,6 +35,7 @@ export async function getServerSideProps({ params }) {
   };
 }
 */
+
 import { useRouter } from 'next/router';
 import EditProject from '../../../components/EditProject';
 import { QueryClient, dehydrate } from '@tanstack/react-query';
@@ -76,17 +77,13 @@ export async function getServerSideProps(context) {
     return {
         props: {
             dehydratedState: dehydrate(queryClient),
-            id, // 傳遞PROJECT ID
-            jwtToken, // 傳遞 JWT token 給COMPONENTS
+            id, // 傳遞項目 ID 給組件
+            jwtToken, // 傳遞 JWT token 給組件
         },
     };
 }
 
 const EditProjectPage = ({ id, jwtToken, dehydratedState }) => {
-    const router = useRouter();
-
-    if (!router.isReady) return null;
-
     return <EditProject projectId={id} jwtToken={jwtToken} dehydratedState={dehydratedState} />;
 };
 

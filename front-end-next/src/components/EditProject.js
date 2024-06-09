@@ -8,11 +8,8 @@ import Swal from "sweetalert2";
 
 const EditProject = ({ projectId, jwtToken }) => {
     const router = useRouter();
-    //const { id } = router.query;
-    //const { jwtToken } = useContext(MyAppContext);
     const [error, setError] = useState(null);
     const [errors, setErrors] = useState([]);
-    //先隨便用Array(10)
     const [project, setProject] = useState({
         id: 0,
         title: "",
@@ -36,22 +33,19 @@ const EditProject = ({ projectId, jwtToken }) => {
         {id: "personal", value: "Personal"},
         {id: "indieTeam", value: "Indie Team"},
     ];
-    
-    // 檢查特定欄位是否有錯誤
+
     const hasError = (key) => {
         return errors.indexOf(key) !== -1;
     }
 
     useEffect(() => {
-        if (jwtToken === "") {
+        if (!jwtToken) {
             router.push("/login");
             return;
         }
 
-        //const projectId = Number(id);
         const fetchData = async () => {
             if (projectId === "0") {
-                // adding a project
                 setProject({
                     id: 0,
                     title: "",
@@ -64,7 +58,6 @@ const EditProject = ({ projectId, jwtToken }) => {
                     skills_array: [],
                 });
 
-                //fetch
                 const headers = new Headers();
                 headers.append("Content-Type", "application/json");
 
@@ -92,7 +85,6 @@ const EditProject = ({ projectId, jwtToken }) => {
                         console.log(err);
                     });
             } else {
-                // editing an existing project
                 const headers = new Headers();
                 headers.append("Content-Type", "application/json");
                 headers.append("Authorization", "Bearer " + jwtToken);
@@ -109,28 +101,27 @@ const EditProject = ({ projectId, jwtToken }) => {
                         }
                         return response.json();
                     })
-                .then((data) => {
-                    const checks = [];
+                    .then((data) => {
+                        const checks = [];
 
-                    data.skills.forEach(g => {
-                        if (data.project.skills_array.indexOf(g.id) !== -1) {
-                            checks.push({id: g.id, checked: true, skill_name: g.skill_name});
-                        } else {
-                            checks.push({id: g.id, checked: false, skill_name: g.skill_name});
-                        }
-                    });
+                        data.skills.forEach(g => {
+                            if (data.project.skills_array.indexOf(g.id) !== -1) {
+                                checks.push({id: g.id, checked: true, skill_name: g.skill_name});
+                            } else {
+                                checks.push({id: g.id, checked: false, skill_name: g.skill_name});
+                            }
+                        });
 
-                    // set state
-                    setProject({
-                        ...data.project,
-                        skills: checks,
+                        setProject({
+                            ...data.project,
+                            skills: checks,
+                        });
+                    })
+                    .catch(err => {
+                        console.log(err);
                     });
-                })
-                .catch(err => {
-                    console.log(err);
-                });
             }
-        };
+        }
         fetchData();
     }, [projectId, jwtToken, router]);
 
@@ -154,9 +145,6 @@ const EditProject = ({ projectId, jwtToken }) => {
         })
 
         if (project.skills_array.length === 0) {
-            ////alert
-            //alert("You must choose at least one skill!");
-            //errors.push("skills");
             Swal.fire({
                 title: 'Error!',
                 text: 'You must choose at least one skill!',
@@ -172,12 +160,10 @@ const EditProject = ({ projectId, jwtToken }) => {
             return false;
         }
 
-        // passed validation, so save changes
         const headers = new Headers();
         headers.append("Content-Type", "application/json");
         headers.append("Authorization", "Bearer " + jwtToken);
 
-        // assume we are adding a new project
         let method = "PUT";
 
         if (project.id > 0) {
@@ -217,15 +203,10 @@ const EditProject = ({ projectId, jwtToken }) => {
     }
 
     const handleCheck = (event, position) => {
-        console.log("handleCheck called");
-        console.log("value in handleCheck:", event.target.value);
-        console.log("checked is", event.target.checked);
-        console.log("position is", position);
-
         let tmpArr = project.skills;
         tmpArr[position].checked = !tmpArr[position].checked;
 
-        let tmpIDs = project.skills_array.slice();// 複製陣列以避免直接修改狀態
+        let tmpIDs = project.skills_array.slice();
         if (!event.target.checked) {
             tmpIDs.splice(tmpIDs.indexOf(event.target.value));
         } else {
@@ -238,20 +219,13 @@ const EditProject = ({ projectId, jwtToken }) => {
         })
     }
 
-    //// 新增技能
     const [newSkillName, setNewSkillName] = useState("");
-    //WARNING
-    // eslint-disable-next-line no-unused-vars
-    const [skillList, setSkillList] = useState([]); 
-
-    // 取得skillList
     const fetchSkills = useCallback(() => {
         fetch(`${process.env.NEXT_PUBLIC_BACKEND}/skills`,{
             headers: {Authorization: `Bearer ${jwtToken}`,},
         })
             .then(response => response.json())
             .then(data => {
-                // 更新 project狀態以包含最新的技能列表
                 const updatedSkills = data.map(skill => ({
                     id: skill.id,
                     checked: project.skills_array.includes(skill.id),
@@ -268,7 +242,7 @@ const EditProject = ({ projectId, jwtToken }) => {
     }, [fetchSkills, jwtToken, router]);
 
     const handleAddSkill = () => {
-        if (!newSkillName.trim()) return;// 空白技能
+        if (!newSkillName.trim()) return;
 
         const headers = new Headers();
         headers.append("Content-Type", "application/json");
@@ -292,7 +266,6 @@ const EditProject = ({ projectId, jwtToken }) => {
         })
         .catch(error => console.error("Adding new skill failed", error));
     };
-    //
 
     const confirmDelete = () => {
         Swal.fire({
