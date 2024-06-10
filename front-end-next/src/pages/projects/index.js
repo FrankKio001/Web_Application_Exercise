@@ -12,8 +12,11 @@ const ProjectsPage = ({ projects, error }) => {
 
 export async function getServerSideProps() {
     try {
+        console.log(`Backend URL: ${process.env.NEXT_PUBLIC_BACKEND}`);
         console.log('Fetching projects...');
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/projects`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/projects`, {
+            credentials: 'include'
+        });
         if (!response.ok) {
             throw new Error('Failed to fetch projects');
         }

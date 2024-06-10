@@ -19,7 +19,7 @@ func (app *application) enableCORS(h http.Handler) http.Handler {
 			"http://3.27.186.104",
 			"http://localhost",
 			"http://localhost:3000",
-			//"http://frontend:3000",
+			"http://frontend:3000",
 			//"http://192.168.112.4:3000",
 		}
 		for _, allowedOrigin := range allowedOrigins {

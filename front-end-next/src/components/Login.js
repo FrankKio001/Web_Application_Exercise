@@ -42,7 +42,7 @@ const Login = () => {
                 body: JSON.stringify(payload),
             };
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/authenticate`, requestOptions);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_LOGIN}/authenticate`, requestOptions);
             if (!response.ok) {
                 setLoginAttempts(prev => prev + 1);
                 if (response.status === 429) {

@@ -14,9 +14,9 @@ export const MyAppContext = createContext();
 //管理資料提取、快取、更新和無效化等。
 const queryClient = new QueryClient({
   defaultOptions: {
-    //queries: {
-    //  staleTime: 5000,
-    //},
+    queries: {
+      staleTime: 5000,
+    },
   },
 });
 
@@ -34,7 +34,7 @@ function App({ Component, pageProps }) {
       credentials: "include",
     }
 
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND}/logout`, requestOptions)
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_LOGIN}/logout`, requestOptions)
     .catch(error => {
       console.log("error logging out", error);
       setAlertMessage('Logout failed: ' + error.message);

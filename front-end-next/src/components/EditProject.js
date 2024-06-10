@@ -66,7 +66,7 @@ const EditProject = ({ projectId, jwtToken }) => {
                     headers: headers,
                 }
 
-                fetch(`${process.env.NEXT_PUBLIC_BACKEND}/skills`, requestOptions)
+                fetch(`${process.env.NEXT_PUBLIC_BACKEND_LOGIN}/skills`, requestOptions)
                     .then((response) => response.json())
                     .then((data) => {
                         const checks = [];
@@ -94,7 +94,7 @@ const EditProject = ({ projectId, jwtToken }) => {
                     headers: headers,
                 };
 
-                fetch(`${process.env.NEXT_PUBLIC_BACKEND}/admin/projects/${projectId}`, requestOptions)
+                fetch(`${process.env.NEXT_PUBLIC_BACKEND_LOGIN}/admin/projects/${projectId}`, requestOptions)
                     .then((response) => {
                         if (response.status !== 200) {
                             setError("Invalid response code: " + response.status)
@@ -179,7 +179,7 @@ const EditProject = ({ projectId, jwtToken }) => {
             credentials: "include",
         }
 
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND}/admin/projects/${project.id}`, requestOptions)
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_LOGIN}/admin/projects/${project.id}`, requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 if (data.error) {
@@ -221,7 +221,7 @@ const EditProject = ({ projectId, jwtToken }) => {
 
     const [newSkillName, setNewSkillName] = useState("");
     const fetchSkills = useCallback(() => {
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND}/skills`,{
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_LOGIN}/skills`,{
             headers: {Authorization: `Bearer ${jwtToken}`,},
         })
             .then(response => response.json())
@@ -250,7 +250,7 @@ const EditProject = ({ projectId, jwtToken }) => {
     
         const body = JSON.stringify({ skill_name: newSkillName });
     
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND}/admin/skills`, {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_LOGIN}/admin/skills`, {
             method: "POST",
             headers: headers,
             body: body,
@@ -286,7 +286,7 @@ const EditProject = ({ projectId, jwtToken }) => {
                     headers: headers,
                 }
     
-              fetch(`${process.env.NEXT_PUBLIC_BACKEND}/admin/projects/${project.id}`, requestOptions)
+              fetch(`${process.env.NEXT_PUBLIC_BACKEND_LOGIN}/admin/projects/${project.id}`, requestOptions)
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.error) {

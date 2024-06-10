@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from 'next/link';
+import axiosInstance from '../utils/axiosInstance';
 
 const GraphQL = ({ initialProjects, initialSkillList }) => {
     // 設置狀態變數
@@ -9,16 +10,13 @@ const GraphQL = ({ initialProjects, initialSkillList }) => {
 
     // 定義 fetchGraphQL 函數以執行 GraphQL 查詢
     const fetchGraphQL = useCallback((query) => {
-        return fetch(`${process.env.NEXT_PUBLIC_BACKEND}/graph`, {
-            method: "POST",
-            headers: { "Content-Type": "application/graphql" },
-            body: query,
+        return axiosInstance.post('/graph', query, {
+            headers: { "Content-Type": "application/graphql" }
         })
-        .then(response => response.json())
         .then(response => response.data)
-        .catch(err => console.error("GraphQL 查詢失敗", err));
+        .catch(err => console.error("GraphQL 查询失败", err));
     }, []);
-
+    
     // 加載所有項目的函數
     const loadAllProjects = useCallback(() => {
         const query = `
