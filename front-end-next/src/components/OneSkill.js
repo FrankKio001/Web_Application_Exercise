@@ -38,7 +38,7 @@ const OneSkill = ({ skillName, projects, error }) => {
     </>
   );
 };
-//debug 用
+
 /*
 export async function getServerSideProps({ params }) {
   const fetchWithRetry = async (url, options, retries = 3) => {

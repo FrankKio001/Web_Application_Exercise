@@ -9,10 +9,16 @@ import MainContent from '../components/MainContent';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 // import { Hydrate } from '@tanstack/react-query';
 
-// 全局 Context
+// 全局 Context 管理和傳遞應用程式層級的狀態，如jwtToken、警告訊息等。
 export const MyAppContext = createContext();
-
-const queryClient = new QueryClient();
+//管理資料提取、快取、更新和無效化等。
+const queryClient = new QueryClient({
+  defaultOptions: {
+    //queries: {
+    //  staleTime: 5000,
+    //},
+  },
+});
 
 function App({ Component, pageProps }) {
   const [jwtToken, setJwtToken] = useState("");
@@ -101,6 +107,7 @@ function App({ Component, pageProps }) {
 
   return (
     <QueryClientProvider client={queryClient}>
+      {/* <Hydrate state={pageProps.dehydratedState}> */}
       <MyAppContext.Provider value={{ 
         jwtToken, setJwtToken, 
         alertMessage, setAlertMessage, 
@@ -115,12 +122,11 @@ function App({ Component, pageProps }) {
 
           <div className="container-fluid">
             <Header />
-            {/* <Hydrate state={pageProps.dehydratedState}> */}
-              <MainContent Component={Component} pageProps={pageProps} />
-            {/* </Hydrate> */}
+            <MainContent Component={Component} pageProps={pageProps} />
           </div>
         </>
       </MyAppContext.Provider>
+      {/* </Hydrate> */}
     </QueryClientProvider>
   );
 }

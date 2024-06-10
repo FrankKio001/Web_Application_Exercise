@@ -16,7 +16,8 @@
     "nookies": "^2.5.2",
     "react": "^18",
     "react-dom": "^18",
-    "sweetalert2": "^11.11.0"
+    "sweetalert2": "^11.11.0",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@types/node": "^20",

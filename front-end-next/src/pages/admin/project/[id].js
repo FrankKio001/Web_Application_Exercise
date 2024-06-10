@@ -71,7 +71,7 @@ export async function getServerSideProps(context) {
     }
 
     const queryClient = new QueryClient();
-
+    // 預取資料並儲存至 dehydratedState
     await queryClient.prefetchQuery(['project', id], () => fetchProjectData(id, jwtToken));
 
     return {
