@@ -39,13 +39,25 @@ services:
   frontend:
     image: hohokio12/mr.kio:frontend-latest
     build: 
-      context: ./front-end
+      context: ./front-end-next
       dockerfile: Dockerfile
     ports:
       #- "3000:80"
       - "80:80"
     depends_on:
       - backend
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
 
 volumes:
   redis-data:
+
+networks:
+  default:
+    driver: bridge

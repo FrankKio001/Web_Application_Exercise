@@ -1,39 +1,13 @@
-import { useEffect, useState, useContext } from 'react';
+// components/ManageCatalogue.js
+import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { MyAppContext } from '../pages/_app';
 
-const ManageCatalogue = () => {
-    const [projects, setProjects] = useState([]);
-    const { jwtToken } = useContext(MyAppContext);
-    const router = useRouter();
+const ManageCatalogue = ({ projects }) => {
+    if (!projects || projects.length === 0) {
+        return <div>No projects found</div>;
+    }
 
-    useEffect( () => {
-        if (jwtToken === "") {
-            router.push("/login");
-            return
-        }
-        const headers = new Headers();
-        headers.append("Content-Type", "application/json");
-        headers.append("Authorization", "Bearer " + jwtToken);
-
-        const requestOptions = {
-            method: "GET",
-            headers: headers,
-        }
-
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND}/admin/projects`, requestOptions)
-            .then((response) => response.json())
-            .then((data) => {
-                setProjects(data);
-            })
-            .catch(err => {
-                console.log(err);
-            })
-
-    }, [jwtToken, router]);
-
-    return(
+    return (
         <div>
             <h2>Manage Catalogue</h2>
             <hr />
@@ -42,25 +16,25 @@ const ManageCatalogue = () => {
                     <tr>
                         <th>Project</th>
                         <th>Status</th>
-                        <th>LastUpdated</th>
+                        <th>Last Updated</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {projects.map((m) => (
-                        <tr key={m.id}>
+                    {projects.map(project => (
+                        <tr key={project.id}>
                             <td>
-                                <Link href={`/admin/project/${m.id}`}>
-                                    {m.title}
+                                <Link href={`/admin/project/${project.id}`} passHref>
+                                    <a>{project.title}</a>
                                 </Link>
                             </td>
-                            <td>{m.status}</td>
-                            <td>{m.updated_at}</td>
-                        </tr>    
+                            <td>{project.status}</td>
+                            <td>{project.updated_at}</td>
+                        </tr>
                     ))}
                 </tbody>
             </table>
         </div>
-    )
-}
+    );
+};
 
 export default ManageCatalogue;

@@ -1,37 +1,15 @@
-import { useCallback, useEffect, useState, useContext } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 import Input from "./form/Input";
 import Select from "./form/Select";
 import TextArea from "./form/TextArea";
 import Checkbox from "./form/Checkbox";
 import Swal from "sweetalert2";
-import { MyAppContext } from '../pages/_app';
 
-const EditProject = () => {
+const EditProject = ({ projectId, jwtToken }) => {
     const router = useRouter();
-    const { id } = router.query;
-
-    const { jwtToken } = useContext(MyAppContext);
     const [error, setError] = useState(null);
     const [errors, setErrors] = useState([]);
-
-    const StatusOptions = [
-        {id: "ongoing", value: "Ongoing"},
-        {id: "completed", value: "Completed"},
-        {id: "paused", value: "Paused"},
-    ];
-
-    const projectCategoryOptions = [
-        {id: "college", value: "College"},
-        {id: "personal", value: "Personal"},
-        {id: "indieTeam", value: "Indie Team"},
-    ];
-    
-    // 檢查特定欄位是否有錯誤
-    const hasError = (key) => {
-        return errors.indexOf(key) !== -1;
-    }
-    //先隨便用Array(10)
     const [project, setProject] = useState({
         id: 0,
         title: "",
@@ -44,96 +22,108 @@ const EditProject = () => {
         skills_array: [],
     });
 
+    const StatusOptions = [
+        {id: "ongoing", value: "Ongoing"},
+        {id: "completed", value: "Completed"},
+        {id: "paused", value: "Paused"},
+    ];
+
+    const projectCategoryOptions = [
+        {id: "college", value: "College"},
+        {id: "personal", value: "Personal"},
+        {id: "indieTeam", value: "Indie Team"},
+    ];
+
+    const hasError = (key) => {
+        return errors.indexOf(key) !== -1;
+    }
+
     useEffect(() => {
-        if (jwtToken === "") {
+        if (!jwtToken) {
             router.push("/login");
             return;
         }
 
-        const projectId = Number(id);
+        const fetchData = async () => {
+            if (projectId === "0") {
+                setProject({
+                    id: 0,
+                    title: "",
+                    description: "",
+                    technology_stack: "",
+                    status: "",
+                    category: "",
+                    image: "",
+                    skills: [],
+                    skills_array: [],
+                });
 
-        if (!projectId) {
-            // adding a project
-            setProject({
-                id: 0,
-                title: "",
-                description: "",
-                technology_stack: "",
-                status: "",
-                category: "",
-                image: "",
-                skills: [],
-                skills_array: [],
-            });
+                const headers = new Headers();
+                headers.append("Content-Type", "application/json");
 
-            //fetch
-            const headers = new Headers();
-            headers.append("Content-Type", "application/json");
+                const requestOptions = {
+                    method: "GET",
+                    headers: headers,
+                }
 
-            const requestOptions = {
-                method: "GET",
-                headers: headers,
-            }
+                fetch(`${process.env.NEXT_PUBLIC_BACKEND_LOGIN}/skills`, requestOptions)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        const checks = [];
 
-            fetch(`${process.env.NEXT_PUBLIC_BACKEND}/skills`, requestOptions)
-                .then((response) => response.json())
-                .then((data) => {
-                    const checks = [];
-
-                    data.forEach(g => {
-                        checks.push({id: g.id, checked: false, skill_name: g.skill_name});
-                    })
-
-                    setProject(p => ({
-                        ...p,
-                        skills: checks,
-                        skills_array: [],
-                    }))
-                })
-                .catch(err => {
-                    console.log(err);
-                })
-        } else {
-            // editing an existing project
-            const headers = new Headers();
-            headers.append("Content-Type", "application/json");
-            headers.append("Authorization", "Bearer " + jwtToken);
-
-            const requestOptions = {
-                method: "GET",
-                headers: headers,
-            }
-
-            fetch(`${process.env.NEXT_PUBLIC_BACKEND}/admin/projects/${id}`, requestOptions)
-                .then((response) => {
-                    if (response.status !== 200) {
-                        setError("Invalid response code: " + response.status)
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    const checks = [];
-
-                    data.skills.forEach(g => {
-                        if (data.project.skills_array.indexOf(g.id) !== -1) {
-                            checks.push({id: g.id, checked: true, skill_name: g.skill_name});
-                        } else {
+                        data.forEach(g => {
                             checks.push({id: g.id, checked: false, skill_name: g.skill_name});
+                        });
+
+                        setProject(p => ({
+                            ...p,
+                            skills: checks,
+                            skills_array: [],
+                        }));
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            } else {
+                const headers = new Headers();
+                headers.append("Content-Type", "application/json");
+                headers.append("Authorization", "Bearer " + jwtToken);
+
+                const requestOptions = {
+                    method: "GET",
+                    headers: headers,
+                };
+
+                fetch(`${process.env.NEXT_PUBLIC_BACKEND_LOGIN}/admin/projects/${projectId}`, requestOptions)
+                    .then((response) => {
+                        if (response.status !== 200) {
+                            setError("Invalid response code: " + response.status)
                         }
+                        return response.json();
                     })
+                    .then((data) => {
+                        const checks = [];
 
-                    // set state
-                    setProject({
-                        ...data.project,
-                        skills: checks,
+                        data.skills.forEach(g => {
+                            if (data.project.skills_array.indexOf(g.id) !== -1) {
+                                checks.push({id: g.id, checked: true, skill_name: g.skill_name});
+                            } else {
+                                checks.push({id: g.id, checked: false, skill_name: g.skill_name});
+                            }
+                        });
+
+                        setProject({
+                            ...data.project,
+                            skills: checks,
+                        });
                     })
-                })
-                .catch(err => {
-                    console.log(err);
-                })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            }
         }
-
-    }, [id, jwtToken, router.isReady])
+        fetchData();
+    }, [projectId, jwtToken, router]);
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -155,9 +145,6 @@ const EditProject = () => {
         })
 
         if (project.skills_array.length === 0) {
-            ////alert
-            //alert("You must choose at least one skill!");
-            //errors.push("skills");
             Swal.fire({
                 title: 'Error!',
                 text: 'You must choose at least one skill!',
@@ -173,12 +160,10 @@ const EditProject = () => {
             return false;
         }
 
-        // passed validation, so save changes
         const headers = new Headers();
         headers.append("Content-Type", "application/json");
         headers.append("Authorization", "Bearer " + jwtToken);
 
-        // assume we are adding a new project
         let method = "PUT";
 
         if (project.id > 0) {
@@ -194,7 +179,7 @@ const EditProject = () => {
             credentials: "include",
         }
 
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND}/admin/projects/${project.id}`, requestOptions)
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_LOGIN}/admin/projects/${project.id}`, requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 if (data.error) {
@@ -205,7 +190,7 @@ const EditProject = () => {
             })
             .catch(err => {
                 console.log(err);
-            })
+            });
     }
 
     const handleChange = () => (event) => {
@@ -218,15 +203,10 @@ const EditProject = () => {
     }
 
     const handleCheck = (event, position) => {
-        console.log("handleCheck called");
-        console.log("value in handleCheck:", event.target.value);
-        console.log("checked is", event.target.checked);
-        console.log("position is", position);
-
         let tmpArr = project.skills;
         tmpArr[position].checked = !tmpArr[position].checked;
 
-        let tmpIDs = project.skills_array.slice();// 複製陣列以避免直接修改狀態
+        let tmpIDs = project.skills_array.slice();
         if (!event.target.checked) {
             tmpIDs.splice(tmpIDs.indexOf(event.target.value));
         } else {
@@ -239,20 +219,13 @@ const EditProject = () => {
         })
     }
 
-    //// 新增技能
     const [newSkillName, setNewSkillName] = useState("");
-    //WARNING
-    // eslint-disable-next-line no-unused-vars
-    const [skillList, setSkillList] = useState([]); 
-
-    // 取得skillList
     const fetchSkills = useCallback(() => {
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND}/skills`,{
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_LOGIN}/skills`,{
             headers: {Authorization: `Bearer ${jwtToken}`,},
         })
             .then(response => response.json())
             .then(data => {
-                // 更新 project狀態以包含最新的技能列表
                 const updatedSkills = data.map(skill => ({
                     id: skill.id,
                     checked: project.skills_array.includes(skill.id),
@@ -269,7 +242,7 @@ const EditProject = () => {
     }, [fetchSkills, jwtToken, router]);
 
     const handleAddSkill = () => {
-        if (!newSkillName.trim()) return;// 空白技能
+        if (!newSkillName.trim()) return;
 
         const headers = new Headers();
         headers.append("Content-Type", "application/json");
@@ -277,7 +250,7 @@ const EditProject = () => {
     
         const body = JSON.stringify({ skill_name: newSkillName });
     
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND}/admin/skills`, {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_LOGIN}/admin/skills`, {
             method: "POST",
             headers: headers,
             body: body,
@@ -293,7 +266,6 @@ const EditProject = () => {
         })
         .catch(error => console.error("Adding new skill failed", error));
     };
-    //
 
     const confirmDelete = () => {
         Swal.fire({
@@ -314,7 +286,7 @@ const EditProject = () => {
                     headers: headers,
                 }
     
-              fetch(`${process.env.NEXT_PUBLIC_BACKEND}/admin/projects/${project.id}`, requestOptions)
+              fetch(`${process.env.NEXT_PUBLIC_BACKEND_LOGIN}/admin/projects/${project.id}`, requestOptions)
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.error) {

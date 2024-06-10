@@ -86,7 +86,7 @@ func main() {
 		Q:  queries,
 	}
 	//defer app.DB.Connection().Close()
-
+	//__Host-
 	app.auth = Auth{
 		Issuer:        app.JWTIssuer,
 		Audience:      app.JWTAudience,

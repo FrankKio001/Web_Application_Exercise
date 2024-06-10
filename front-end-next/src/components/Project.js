@@ -1,32 +1,13 @@
-import { useEffect, useState } from "react";
-import { useRouter } from 'next/router';
 import Image from 'next/image';
 
-const Project = () => {
-    const [project, setProject] = useState({});
-    const router = useRouter();
-    const { id } = router.query;
-    
-    useEffect(() => {
-        if (typeof id !== 'undefined') {
-            const headers = new Headers();
-            headers.append("Content-Type", "application/json");
+const Project = ({ project, error }) => {
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
 
-            const requestOptions = {
-                method: "GET",
-                headers: headers,
-            }
-
-            fetch(`${process.env.NEXT_PUBLIC_BACKEND}/projects/${id}`, requestOptions)
-                .then((response) => response.json())
-                .then((data) => {
-                    setProject(data);
-                })
-                .catch(err => {
-                    console.log(err);
-                })
-        }
-    }, [id])
+    if (!project) {
+        return <div>No project found.</div>;
+    }
 
     if (project.skills) {
         project.skills = Object.values(project.skills);
@@ -34,7 +15,7 @@ const Project = () => {
         project.skills = [];
     }
 
-    return(
+    return (
         <div>
             <h2>Project: {project.title}</h2>
             <p><strong>Technology Stack:</strong> {project.technology_stack}</p>
@@ -42,7 +23,7 @@ const Project = () => {
             <p><strong>Category:</strong> {project.category}</p>
 
             {/* Display skills if available */}
-            {project.skills && project.skills.length > 0 && (
+            {project.skills.length > 0 && (
                 <div>
                     <h5>Skills</h5>
                     {project.skills.map((skill) => (
@@ -51,17 +32,20 @@ const Project = () => {
                 </div>
             )}
 
-
-            {/* {project.image && project.image.startsWith("http"||"https") && */}
-            {project.image &&
+            {project.image && (
                 <div className="mb-3">
-                    <Image src={"https://images.weserv.nl/?url="+"https://drive.usercontent.google.com/download?id=" + project.image} alt="Project poster" />
+                    <Image 
+                        src={"https://images.weserv.nl/?url=" + encodeURIComponent("https://drive.usercontent.google.com/download?id=" + project.image)} 
+                        alt="Project poster" 
+                        width={600} 
+                        height={400} 
+                    />
                 </div>
-            }
+            )}
 
             <p>{project.description}</p>
         </div>
-    )
-}
+    );
+};
 
 export default Project;

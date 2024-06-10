@@ -32,7 +32,7 @@ COPY --from=builder /app/next.config.mjs ./
 ENV NODE_ENV production
 
 # 暴露端口
-#EXPOSE 3000
+EXPOSE 3000
 
 # 啟動 Next.js 應用程序
 CMD ["npm", "start"]

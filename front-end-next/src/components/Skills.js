@@ -1,58 +1,51 @@
-import { useEffect, useState } from 'react';
+// src/components/Skills.js
 import Link from 'next/link';
 
-const Skills = () => {
-  const [skills, setSkills] = useState([]);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-
-    const requestOptions = {
-      method: "GET",
-      headers: headers,
-    };
-
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND}/skills`, requestOptions)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.error) {
-          setError(data.message);
-        } else {
-          setSkills(data);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
-
-  if (error !== null) {
-    return <div>Error: {error.message}</div>;
-  } else {
-    return (
-      <div>
-        <h2>Skills</h2>
-        <hr />
-
-        <div className="list-group">
-            {skills.map((g) => (
-                <Link
-                    key={g.id}
-                    className="list-group-item list-group-item-action"
-                    href={`/skills/${g.id}`}
-                    state={
-                        {
-                            skillName: g.skill_name,
-                        }
-                    }
-                    >{g.skill_name}</Link>
-            ))}
-        </div>
+// 屬性skills
+const Skills = ({ skills }) => {
+  return (
+    <div>
+      <h2>Skills</h2>
+      <hr />
+      <div className="list-group">
+        {skills.map((g) => (
+          <Link
+            key={g.id}
+            href={`/skills/${g.id}`}
+            className="list-group-item list-group-item-action"
+          >
+            {g.skill_name}
+          </Link>
+        ))}
       </div>
-    );
-  }
+    </div>
+  );
 };
+
+//getStaticProps 靜態生成頁面
+//異步async
+export async function getStaticProps() {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/skills`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch skills');// 失敗
+    }
+    const skills = await response.json();// 解析技能數據
+
+    return {
+      props: {
+        skills,// 傳遞給頁面
+      },
+      revalidate: 10, // Revalidate at most once every 10 seconds
+    };
+  } catch (error) {
+    return {
+      props: {
+        skills: [],//發生錯誤，傳遞空的技能
+        error: error.message,
+      },
+    };
+  }
+}
 
 export default Skills;

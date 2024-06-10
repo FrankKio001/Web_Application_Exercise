@@ -6,9 +6,19 @@ import '../app/header.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from '../components/Header';
 import MainContent from '../components/MainContent'; 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+// import { Hydrate } from '@tanstack/react-query';
 
-
+// 全局 Context 管理和傳遞應用程式層級的狀態，如jwtToken、警告訊息等。
 export const MyAppContext = createContext();
+//管理資料提取、快取、更新和無效化等。
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5000,
+    },
+  },
+});
 
 function App({ Component, pageProps }) {
   const [jwtToken, setJwtToken] = useState("");
@@ -17,13 +27,14 @@ function App({ Component, pageProps }) {
   const [tickInterval, setTickInterval] = useState(null);
   const router = useRouter();
 
+  // Log out function
   const logOut = () => {
     const requestOptions = {
       method: "GET",
       credentials: "include",
     }
 
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND}/logout`, requestOptions)
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_LOGIN}/logout`, requestOptions)
     .catch(error => {
       console.log("error logging out", error);
       setAlertMessage('Logout failed: ' + error.message);
@@ -37,6 +48,7 @@ function App({ Component, pageProps }) {
     router.push("/login");
   }
 
+  // Toggle refresh
   const toggleRefresh = useCallback((status) => {
     console.log("clicked");
 
@@ -53,13 +65,13 @@ function App({ Component, pageProps }) {
         .then((response) => response.json())
         .then((data) => {
           if (data.access_token) {
-            setJwtToken(data.access_token);
+            setJwtToken(data.access_token);// 設定新的 JWT Token
           }
         })
         .catch(error => {
           console.log("user is not logged in");
         })
-      }, 600000);
+      }, 600000);// 10 分鐘
       setTickInterval(i);
       console.log("setting tick interval to", i);
     } else {
@@ -70,8 +82,10 @@ function App({ Component, pageProps }) {
     }
   }, [tickInterval])
 
+
+  // 頁面加載
   useEffect(() => {
-    if (jwtToken === "") {
+    if (typeof window !== 'undefined' && jwtToken === "") {
       const requestOptions = {
         method: "GET",
         credentials: "include",
@@ -81,8 +95,8 @@ function App({ Component, pageProps }) {
         .then((response) => response.json())
         .then((data) => {
           if (data.access_token) {
-            setJwtToken(data.access_token);
-            toggleRefresh(true);
+            setJwtToken(data.access_token);// 設定新的 JWT Token
+            toggleRefresh(true);// Toggle refresh
           }
         })
         .catch(error => {
@@ -92,24 +106,28 @@ function App({ Component, pageProps }) {
   }, [jwtToken, toggleRefresh])
 
   return (
-    <MyAppContext.Provider value={{ 
-      jwtToken, setJwtToken, 
-      alertMessage, setAlertMessage, 
-      alertClassName, setAlertClassName, 
-      toggleRefresh, logOut 
-    }}>
-    <>
-      <Head>
-        <link rel="icon" href="/favicon.ico" />
-        <title>Mr.Kio</title>
-      </Head>
+    <QueryClientProvider client={queryClient}>
+      {/* <Hydrate state={pageProps.dehydratedState}> */}
+      <MyAppContext.Provider value={{ 
+        jwtToken, setJwtToken, 
+        alertMessage, setAlertMessage, 
+        alertClassName, setAlertClassName, 
+        toggleRefresh, logOut 
+      }}>
+        <>
+          <Head>
+            <link rel="icon" href="/favicon.ico" />
+            <title>Mr.Kio</title>
+          </Head>
 
-      <div className="container-fluid">
-        <Header />
-        <MainContent Component={Component} pageProps={pageProps} />
-      </div>
-    </>
-    </MyAppContext.Provider>
+          <div className="container-fluid">
+            <Header />
+            <MainContent Component={Component} pageProps={pageProps} />
+          </div>
+        </>
+      </MyAppContext.Provider>
+      {/* </Hydrate> */}
+    </QueryClientProvider>
   );
 }
 
