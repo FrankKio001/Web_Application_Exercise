@@ -39,11 +39,8 @@ back-end/
 			
 front-end
 	.env
-	.env.local
-	Dockerfile
 	src/
 		App.js
-		App.css
 		index.js
 		components/
 			alert.js
@@ -52,7 +49,7 @@ front-end
 			Skills.js
 			GraphQL.js
 			Home.js
-			Login.js
+			login.js
 			ManageCatalogue.js
 			Project.js
 			Projects.js
