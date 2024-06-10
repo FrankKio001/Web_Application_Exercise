@@ -43,7 +43,7 @@ export async function getServerSideProps() {
     };
 
     const fetchGraphQL = async (query) => {
-        return fetch(`${process.env.NEXT_PUBLIC_BACKEND}/graph`, {
+        return fetch(`${process.env.NEXT_PUBLIC_BACKEND_LOGIN}/graph`, {
             method: "POST",
             headers: { "Content-Type": "application/graphql" },
             body: query,
